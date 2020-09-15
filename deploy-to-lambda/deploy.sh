@@ -43,5 +43,5 @@ function deploy()
 
 }
 
-# deploy dev 1 4 /devapi/ algorea $1 $2
+deploy dev 1 4 /devapi/ algorea $1 $2
 deploy prod 3 2 /api/ algorea_full $1 $2
