@@ -16,10 +16,15 @@ if [ ! -f ./scripts/deploy-frontend.sh ]; then
 fi
 
 DEPLOYED_ENV=$1
-DEPLOYMT_NUM=$2
+DEPLOYMT_ID=$2
 
 if [[ -z "${DEPLOYED_ENV}" ]]; then
   echo "Missing parameter: environment to be deployed"
+  exit 1;
+fi
+
+if [[ -z "${DEPLOYMT_ID}" ]]; then
+  echo "Missing parameter: DEPLOYMT_ID"
   exit 1;
 fi
 
@@ -27,7 +32,7 @@ ENV_FILE=${ENV_DIR}/${DEPLOYED_ENV}.yml
 VERSION=$(yq '.frontend.version' ${ENV_FILE})
 CONFIG_FILE=$(yq '.frontend.config_file' ${ENV_FILE})
 APP_BUILD_DIR=${BUILD_DIR}/AlgoreaFrontend-${VERSION}
-DEPLOY_DIR=$(yq '.frontend.deployment_prefix' ${ENV_FILE})-${VERSION}
+DEPLOY_DIR=$(yq '.frontend.deployment_prefix' ${ENV_FILE})-${DEPLOYMT_ID}
 SCRIPT_PWD=$(pwd)
 AWS_EXTRA_ARGS="" # for debugging (to force profile for instance)
 AWS_S3_EXTRA_ARGS="${AWS_EXTRA_ARGS} " # for debugging (--dryrun for instance)
@@ -51,10 +56,10 @@ npx ng build --configuration production-fr --base-href / --deploy-url //assets.a
 aws s3 sync ./dist/algorea/ s3://algorea-static/deployments/${DEPLOY_DIR} --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400' ${AWS_S3_EXTRA_ARGS}
 aws s3 cp ./dist/algorea/fr/index.html s3://algorea-static/deployments/${DEPLOY_DIR}/fr/index.html --acl public-read --cache-control 'max-age=300' ${AWS_S3_EXTRA_ARGS}
 echo '<html><head><script>window.location.replace("en/");</script></head></html>' > dist/algorea/index.html
-aws s3 cp dist/algorea/index.html s3://algorea-static/deployments/${DEPLOY_DIR} ${AWS_S3_EXTRA_ARGS} --acl public-read --cache-control 'max-age=300' ${AWS_S3_EXTRA_ARGS}
+aws s3 cp dist/algorea/index.html s3://algorea-static/deployments/${DEPLOY_DIR}/index.html ${AWS_S3_EXTRA_ARGS} --acl public-read --cache-control 'max-age=300' ${AWS_S3_EXTRA_ARGS}
 cd ${SCRIPT_PWD}
 
 # Deploy
 NEW_CONFIG=$(PREFIX=deployments/${DEPLOY_DIR}/ yq '.Variables.S3_PREFIX=strenv(PREFIX)' ${ENV_DIR}/configs/generic_algoreastatic_lambda.json)
 aws lambda update-function-configuration --function-name Algorea-static --region eu-central-1 --environment "${NEW_CONFIG}" ${AWS_EXTRA_ARGS} > /dev/null
-aws lambda publish-version --function-name Algorea-static --region eu-central-1  --description "Autodeployment ${DEPLOYMT_NUM} (v${VERSION} on env ${DEPLOYED_ENV})" ${AWS_EXTRA_ARGS} | yq '.Version'
+aws lambda publish-version --function-name Algorea-static --region eu-central-1  --description "Autodeployment ${DEPLOYMT_ID} (v${VERSION} on env ${DEPLOYED_ENV})" ${AWS_EXTRA_ARGS} | yq '.Version'
