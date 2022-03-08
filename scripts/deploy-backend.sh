@@ -35,10 +35,10 @@ mkdir -p ${BUILD_DIR}
 curl -L https://github.com/France-ioi/AlgoreaBackend/releases/download/v${VERSION}/AlgoreaBackend-linux --output ${BUILD_DIR}/AlgoreaBackend-linux
 
 # Configure
-PUBLIC_KEY=$(yq '.backend.public_key_file' ${ENV_FILE})
-PRIVATE_KEY=$(yq '.backend.private_key_file' ${ENV_FILE})
-echo ${PUBLIC_KEY} > ${BUILD_DIR}/public_key.pem
-echo ${PRIVATE_KEY} > ${BUILD_DIR}/private_key.pem
+PUBLIC_KEY_FILE=$(yq '.backend.public_key_file' ${ENV_FILE})
+PRIVATE_KEY_FILE=$(yq '.backend.private_key_file' ${ENV_FILE})
+cp ${ENV_DIR}/configs/${PUBLIC_KEY_FILE} ${BUILD_DIR}/public_key.pem
+cp ${ENV_DIR}/configs/${PRIVATE_KEY_FILE} ${BUILD_DIR}/private_key.pem
 ALLUSERSGRP=$(yq '.backend.config.all_users_group' ${ENV_FILE})
 TMPUSERSGRP=$(yq '.backend.config.temp_users_group' ${ENV_FILE})
 mkdir -p ${BUILD_DIR}/conf
