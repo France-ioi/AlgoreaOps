@@ -1,5 +1,5 @@
 frontend:
-  deployment_id: 2
+  deployment_id: 3
   version: 1.0.0
   config_file: tezos-frontend.ts
   deployment_prefix: opentezos

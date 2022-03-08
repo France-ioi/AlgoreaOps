@@ -43,7 +43,7 @@ curl -L https://github.com/France-ioi/AlgoreaFrontend/archive/refs/tags/v${VERSI
 tar -xf ${BUILD_DIR}/archive.tar.gz -C ${BUILD_DIR}
 
 # Configure
-cp ${ENV_DIR}/configs/${CONFIG_FILE} ${APP_BUILD_DIR}/src/environments/environments.ts
+cp ${ENV_DIR}/configs/${CONFIG_FILE} ${APP_BUILD_DIR}/src/environments/environment.prod.ts
 
 # Build
 cd ${APP_BUILD_DIR}
