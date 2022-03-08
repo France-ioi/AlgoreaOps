@@ -1,9 +1,11 @@
 frontend:
+  deployment_id: 1
   version: 1.0.0
-  config_file: algorea-frontend.ts
-  deployment_prefix: algorea.org
+  config_file: tezos-frontend.ts
+  deployment_prefix: opentezos
 
 backend:
+  deployment_id: 1
   version: 1.0.0
   public_key_file: tezos-public.pem
   private_key_file: tezos-private.pem

@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         component: [ frontend, backend ]
-        environment: [ default ]
+        environment: [ default, tezos ]
     steps:
       - uses: actions/checkout@v2
       - uses: mikefarah/yq@v4.21.1
