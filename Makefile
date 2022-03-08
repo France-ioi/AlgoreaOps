@@ -9,6 +9,7 @@ deploy-backend: check-env
 	./scripts/deploy-backend.sh
 
 encrypt-config:
+	rm -f ./environments/configs.encrypted
 	tar --create --file - -- ./environments/configs | $(OPENSSL) enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -out ./environments/configs.encrypted
 
 # provide the password in the PASS variable to decrypt without prompt (usage: "PASS=mydecryptionkey make decrypt-config")
