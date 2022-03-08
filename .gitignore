@@ -1,0 +1,4 @@
+/build
+
+# configs are encrypted in /environments/configs.encrypted so we do not store them in plain text
+/environments/configs/

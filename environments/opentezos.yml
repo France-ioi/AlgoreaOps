@@ -1,0 +1,13 @@
+frontend:
+  version: 1.0.0
+  config_file: algorea-frontend.ts
+  deployment_prefix: algorea.org
+
+backend:
+  version: 1.0.0
+  public_key_file: tezos-public.pem
+  private_key_file: tezos-private.pem
+  config:
+    all_users_group: 3
+    temp_users_group: 2
+  lambda_env_file: tezos_backend_lambda.json

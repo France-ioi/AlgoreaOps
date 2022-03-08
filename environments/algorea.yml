@@ -1,0 +1,16 @@
+
+frontend:
+  deployment_id: 1
+  version: 1.0.0
+  config_file: algorea-frontend.ts
+  deployment_prefix: algorea.org
+
+backend:
+  deployment_id: 1
+  version: 1.0.0
+  public_key_file: algorea.org-public.pem
+  private_key_file: algorea.org-private.pem
+  config:
+    all_users_group: 3
+    temp_users_group: 2
+  lambda_env_file: algorea_algoreabackend_lambda.json

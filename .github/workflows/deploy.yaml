@@ -1,0 +1,41 @@
+name: Deployment
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: [ frontend, backend ]
+        environment: [ algorea ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: mikefarah/yq@v4.21.1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-3
+
+      - name: Check if deployment number has been already been deployed on lambda
+        run: |
+          DEPLOYMENT_ID=$(yq '.${{ matrix.component }}.deployment_id' ./environments/${{ matrix.environment }}.yml)
+          LAMBDA_VER=$(curl -L https://franceioi-algorea.s3.eu-west-3.amazonaws.com/deployments/${{ matrix.component }}-${{ matrix.environment }}-${DEPLOYMENT_ID}.yml | yq '.lambda_version')
+          echo "DEPLOYMENT_ID=${DEPLOYMENT_ID}" >> $GITHUB_ENV
+          echo "LAMBDA_VER=${LAMBDA_VER}" >> $GITHUB_ENV
+
+      - name: Deploy to lambda
+        if: ${{ !env.LAMBDA_VER }}
+        run: |
+          PASS=${{ secrets.CONFIG_ENC_KEY }} make decrypt-config
+          ./scripts/deploy-${{ matrix.component }}.sh ${{ matrix.environment }} | tee ./output.txt
+          LAMBDA_VER=$(tail -n 1 ./output.txt)
+          if ! [[ $LAMBDA_VER =~ ^[0-9]+$ ]] ; then echo "error: version $LAMBDA_VER is not a number" >&2; exit 1; fi
+          echo "lambda_version: ${LAMBDA_VER}" > version.yml
+          aws s3 cp ./version.yml s3://franceioi-algorea/deployments/${{ matrix.component }}-${{ matrix.environment }}-${{ env.DEPLOYMENT_ID }}.yml --acl public-read
+          echo "::set-output name=lambda_version::${LAMBDA_VER}"
