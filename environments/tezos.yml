@@ -5,7 +5,7 @@ frontend:
   deployment_prefix: opentezos
 
 backend:
-  deployment_id: 1
+  deployment_id: 2
   version: 1.0.0
   public_key_file: tezos-public.pem
   private_key_file: tezos-private.pem

@@ -42,7 +42,7 @@ echo ${PRIVATE_KEY} > ${BUILD_DIR}/private_key.pem
 ALLUSERSGRP=$(yq '.backend.config.all_users_group' ${ENV_FILE})
 TMPUSERSGRP=$(yq '.backend.config.temp_users_group' ${ENV_FILE})
 mkdir -p ${BUILD_DIR}/conf
-yq '.domains[0].allUsersGroup=strenv(ALLUSERSGRP),.domains[0].tempUsersGroup=strenv(TMPUSERSGRP)' ${ENV_DIR}/configs/generic-backend-empty.yaml > ${BUILD_DIR}/conf/config.yaml
+ALLUSERSGRP=${ALLUSERSGRP} TMPUSERSGRP=${TMPUSERSGRP} yq '.domains[0].allUsersGroup=strenv(ALLUSERSGRP),.domains[0].tempUsersGroup=strenv(TMPUSERSGRP)' ${ENV_DIR}/configs/generic-backend-empty.yaml > ${BUILD_DIR}/conf/config.yaml
 cd ${BUILD_DIR}
 zip -r ../${ARCHIVE_FILENAME} .
 cd ${SCRIPT_PWD}

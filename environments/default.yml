@@ -6,7 +6,7 @@ frontend:
   deployment_prefix: default
 
 backend:
-  deployment_id: 1
+  deployment_id: 2
   version: 1.0.0
   public_key_file: default-public.pem
   private_key_file: default-private.pem
