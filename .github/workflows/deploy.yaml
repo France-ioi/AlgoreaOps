@@ -10,6 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1 # to prevent 2 lambda update at the same time (temp fix)
       matrix:
         component: [ frontend, backend ]
         environment: [ default, tezos ]
