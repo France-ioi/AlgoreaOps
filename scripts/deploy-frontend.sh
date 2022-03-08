@@ -16,6 +16,7 @@ if [ ! -f ./scripts/deploy-frontend.sh ]; then
 fi
 
 DEPLOYED_ENV=$1
+DEPLOYMT_NUM=$2
 
 if [[ -z "${DEPLOYED_ENV}" ]]; then
   echo "Missing parameter: environment to be deployed"
@@ -56,4 +57,4 @@ cd ${SCRIPT_PWD}
 # Deploy
 NEW_CONFIG=$(PREFIX=deployments/${DEPLOY_DIR}/ yq '.Variables.S3_PREFIX=strenv(PREFIX)' ${ENV_DIR}/configs/generic_algoreastatic_lambda.json)
 aws lambda update-function-configuration --function-name Algorea-static --region eu-central-1 --environment "${NEW_CONFIG}" ${AWS_EXTRA_ARGS} > /dev/null
-aws lambda publish-version --function-name Algorea-static --region eu-central-1  --description "Autodeployment v${VERSION} on env ${DEPLOYED_ENV}" ${AWS_EXTRA_ARGS} | yq '.Version'
+aws lambda publish-version --function-name Algorea-static --region eu-central-1  --description "Autodeployment ${DEPLOYMT_NUM} (v${VERSION} on env ${DEPLOYED_ENV})" ${AWS_EXTRA_ARGS} | yq '.Version'

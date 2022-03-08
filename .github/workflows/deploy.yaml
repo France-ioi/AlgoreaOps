@@ -33,7 +33,7 @@ jobs:
         if: ${{ !env.LAMBDA_VER }}
         run: |
           PASS=${{ secrets.CONFIG_ENC_KEY }} make decrypt-config
-          ./scripts/deploy-${{ matrix.component }}.sh ${{ matrix.environment }} | tee ./output.txt
+          ./scripts/deploy-${{ matrix.component }}.sh ${{ matrix.environment }} ${{ env.DEPLOYMENT_ID }} | tee ./output.txt
           LAMBDA_VER=$(tail -n 1 ./output.txt)
           if ! [[ $LAMBDA_VER =~ ^[0-9]+$ ]] ; then echo "error: version $LAMBDA_VER is not a number" >&2; exit 1; fi
           echo "lambda_version: ${LAMBDA_VER}" > version.yml
