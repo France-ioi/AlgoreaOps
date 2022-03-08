@@ -3,10 +3,10 @@ OPENSSL="openssl" # must be >1.1.1. on OSX, use homebrew version at /usr/local/o
 deploy: check-env deploy-frontend deploy-backend
 
 deploy-frontend: check-env
-	./scripts/deploy-frontend.sh
+	./scripts/deploy-frontend.sh $(DEPLOYED_ENV)
 
 deploy-backend: check-env
-	./scripts/deploy-backend.sh
+	./scripts/deploy-backend.sh $(DEPLOYED_ENV)
 
 encrypt-config:
 	rm -f ./environments/configs.encrypted
@@ -21,8 +21,8 @@ else
 endif
 
 check-env:
-ifndef ENV
-	$(error ENV is undefined)
+ifndef DEPLOYED_ENV
+	$(error DEPLOYED_ENV is undefined)
 endif
 
 .FORCE: # force the rule using it to always re-run
