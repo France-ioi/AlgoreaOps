@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         component: [ frontend, backend ]
-        environment: [ algorea ]
+        environment: [ default ]
     steps:
       - uses: actions/checkout@v2
       - uses: mikefarah/yq@v4.21.1

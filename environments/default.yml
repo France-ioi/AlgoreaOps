@@ -1,0 +1,16 @@
+
+frontend:
+  deployment_id: 1
+  version: 1.0.0
+  config_file: default-frontend.ts
+  deployment_prefix: default
+
+backend:
+  deployment_id: 1
+  version: 1.0.0
+  public_key_file: default-public.pem
+  private_key_file: default-private.pem
+  config:
+    all_users_group: 3
+    temp_users_group: 2
+  lambda_env_file: default_algoreabackend_lambda.json
