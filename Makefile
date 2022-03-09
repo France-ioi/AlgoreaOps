@@ -1,12 +1,4 @@
-OPENSSL="openssl" # must be >1.1.1. on OSX, use homebrew version at /usr/local/opt/openssl/bin/openssl
-
-deploy: check-env deploy-frontend deploy-backend
-
-deploy-frontend: check-env
-	./scripts/deploy-frontend.sh $(DEPLOYED_ENV)
-
-deploy-backend: check-env
-	./scripts/deploy-backend.sh $(DEPLOYED_ENV)
+OPENSSL="/usr/local/opt/openssl/bin/openssl" # must be >1.1.1. on OSX, use homebrew version at /usr/local/opt/openssl/bin/openssl
 
 encrypt-config:
 	rm -f ./environments/configs.encrypted
