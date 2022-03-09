@@ -1,4 +1,4 @@
-OPENSSL="/usr/local/opt/openssl/bin/openssl" # must be >1.1.1. on OSX, use homebrew version at /usr/local/opt/openssl/bin/openssl
+OPENSSL="openssl" # must be >1.1.1. on OSX, use homebrew version at /usr/local/opt/openssl/bin/openssl
 
 encrypt-config:
 	rm -f ./environments/configs.encrypted
