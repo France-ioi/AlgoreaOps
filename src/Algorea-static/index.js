@@ -2,7 +2,7 @@ var AWS = require('aws-sdk');
 
 exports.handler = function(event, context, callback) {
 
-	if (process.env.DEBUG) console.log('(debug) event: '+JSON.stringify(event));
+	if (parseInt(process.env.DEBUG)) console.log('(debug) event: '+JSON.stringify(event));
 
 	var region = process.env.S3_REGION;
 	var bucket = process.env.S3_BUCKET;
