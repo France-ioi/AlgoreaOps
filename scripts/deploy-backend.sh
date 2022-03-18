@@ -39,10 +39,8 @@ PUBLIC_KEY_FILE=$(yq '.backend.public_key_file' ${ENV_FILE})
 PRIVATE_KEY_FILE=$(yq '.backend.private_key_file' ${ENV_FILE})
 cp ${ENV_DIR}/configs/${PUBLIC_KEY_FILE} ${BUILD_DIR}/public_key.pem
 cp ${ENV_DIR}/configs/${PRIVATE_KEY_FILE} ${BUILD_DIR}/private_key.pem
-ALLUSERSGRP=$(yq '.backend.config.all_users_group' ${ENV_FILE})
-TMPUSERSGRP=$(yq '.backend.config.temp_users_group' ${ENV_FILE})
 mkdir -p ${BUILD_DIR}/conf
-ALLUSERSGRP=${ALLUSERSGRP} TMPUSERSGRP=${TMPUSERSGRP} yq '.domains[0].allUsersGroup=strenv(ALLUSERSGRP),.domains[0].tempUsersGroup=strenv(TMPUSERSGRP)' ${ENV_DIR}/configs/generic-backend-empty.yaml > ${BUILD_DIR}/conf/config.yaml
+cp ${ENV_DIR}/configs/$(yq '.backend.config_file' ${ENV_FILE}) ${BUILD_DIR}/conf/config.yaml
 cd ${BUILD_DIR}
 zip -r ../${ARCHIVE_FILENAME} .
 cd ${SCRIPT_PWD}

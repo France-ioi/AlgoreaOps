@@ -7,9 +7,7 @@ frontend:
 backend:
   deployment_id: 3
   version: 1.0.0
+  config_file: tezos-backend.yml
   public_key_file: tezos-public.pem
   private_key_file: tezos-private.pem
-  config:
-    all_users_group: 3
-    temp_users_group: 2
-  lambda_env_file: tezos_backend_lambda.json
+  lambda_env_file: tezos-backend-lambda.json
