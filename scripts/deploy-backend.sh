@@ -48,9 +48,10 @@ cd ${SCRIPT_PWD}
 # Deploy
 LAMBDA_CONFIG_FILE=$(yq '.backend.lambda_env_file' ${ENV_FILE})
 aws s3 sync ${BUILD_DIR}/../ s3://algorea-lambda-upload/lambda-code/ --exclude "*" --include ${ARCHIVE_FILENAME} ${AWS_S3_EXTRA_ARGS}
-aws lambda update-function-code --region eu-central-1 --function-name AlgoreaBackend --s3-bucket algorea-lambda-upload --s3-key lambda-code/${ARCHIVE_FILENAME} --query 'LastUpdateStatus' ${AWS_EXTRA_ARGS}
-aws lambda update-function-configuration --region eu-central-1 --function-name AlgoreaBackend --environment "`cat ${ENV_DIR}/configs/${LAMBDA_CONFIG_FILE}`" ${AWS_EXTRA_ARGS} > /dev/null
-aws lambda publish-version --region eu-central-1 --function-name AlgoreaBackend --description "Autodeployment ${DEPLOYMT_ID} (v${VERSION} on env ${DEPLOYED_ENV})" ${AWS_EXTRA_ARGS} | yq '.Version'
+CODESHA=$(aws lambda update-function-code --region eu-central-1 --function-name AlgoreaBackend --s3-bucket algorea-lambda-upload --s3-key lambda-code/${ARCHIVE_FILENAME} ${AWS_EXTRA_ARGS} | yq '.CodeSha256')
+REVISIONID=$(aws lambda update-function-configuration --region eu-central-1 --function-name AlgoreaBackend --environment "`cat ${ENV_DIR}/configs/${LAMBDA_CONFIG_FILE}`" ${AWS_EXTRA_ARGS} | yq '.RevisionId')
+sleep 1
+aws lambda publish-version --region eu-central-1 --function-name AlgoreaBackend --description "Autodeployment ${DEPLOYMT_ID} (v${VERSION} on env ${DEPLOYED_ENV})" --code-sha256 ${CODESHA} ${AWS_EXTRA_ARGS} | yq '.Version'
 
 # Cleanup
 rm ${BUILD_DIR}/../${ARCHIVE_FILENAME}
