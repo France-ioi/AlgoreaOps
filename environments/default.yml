@@ -12,3 +12,4 @@ backend:
   public_key_file: default-public.pem
   private_key_file: default-private.pem
   lambda_env_file: default-algoreabackend-lambda.json
+  migration_secrets_file: default-migration-secrets.yml
