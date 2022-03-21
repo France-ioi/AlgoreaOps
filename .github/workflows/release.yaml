@@ -32,6 +32,8 @@ jobs:
           FRONTEND_DEPLID=$(yq '.frontend.deployment_id' ./environments/${ENVIRONMENT}.yml)
           BACKEND_ENV_VER=$(curl -L https://franceioi-algorea.s3.eu-west-3.amazonaws.com/deployments/backend-${ENVIRONMENT}-${BACKEND_DEPLID}.yml | yq '.lambda_version')
           FRONTEND_ENV_VER=$(curl -L https://franceioi-algorea.s3.eu-west-3.amazonaws.com/deployments/frontend-${ENVIRONMENT}-${FRONTEND_DEPLID}.yml | yq '.lambda_version')
+          [ -z "${BACKEND_ENV_VER}" ] && echo "Backend: the expected deployment id (${ENVIRONMENT}-${BACKEND_DEPLID}) is not (yet) deployed" && exit 1
+          [ -z "${FRONTEND_ENV_VER}" ] && echo "Frontend: the expected deployment id (${ENVIRONMENT}-${FRONTEND_DEPLID}) is not (yet) deployed" && exit 1
           echo "LAMBDA VERSIONS - Backend: ${BACKEND_RUNNING_VER} (wanted ${BACKEND_ENV_VER}) - Frontend ${FRONTEND_RUNNING_VER} (wanted ${FRONTEND_ENV_VER})"
           echo "BACKEND_RUNNING_VER=${BACKEND_RUNNING_VER}" >> $GITHUB_ENV
           echo "FRONTEND_RUNNING_VER=${FRONTEND_RUNNING_VER}" >> $GITHUB_ENV
