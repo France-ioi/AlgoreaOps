@@ -26,6 +26,7 @@ jobs:
       - name: Fetch versions
         run: |
           ENVIRONMENT=${{ github.event.inputs.environment }}
+          echo "ENVIRONMENT TO BE RELEASE: ${ENVIRONMENT}"
           BACKEND_RUNNING_VER=$(aws lambda get-alias --function-name AlgoreaBackend --name ${ENVIRONMENT} | yq .FunctionVersion)
           FRONTEND_RUNNING_VER=$(aws lambda get-alias --function-name Algorea-static --name ${ENVIRONMENT} | yq .FunctionVersion)
           BACKEND_DEPLID=$(yq '.backend.deployment_id' ./environments/${ENVIRONMENT}.yml)
