@@ -67,8 +67,8 @@ jobs:
 
       - name: Release backend
         if: ${{ env.BACKEND_RUNNING_VER != env.BACKEND_ENV_VER }}
-        run: 'echo "TODO Backend release..."'
+        run: aws lambda update-alias --function-name AlgoreaBackend --name ${{ github.event.inputs.environment }} --function-version ${{env.BACKEND_ENV_VER}}
 
       - name: Release frontend
         if: ${{ env.FRONTEND_RUNNING_VER != env.FRONTEND_ENV_VER }}
-        run: 'echo "TODO frontend release..."'
+        run: aws lambda update-alias --function-name Algorea-static --name ${{ github.event.inputs.environment }} --function-version ${{env.FRONTEND_ENV_VER}}
