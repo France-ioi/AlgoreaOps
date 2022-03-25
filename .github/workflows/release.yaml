@@ -41,14 +41,6 @@ jobs:
           echo "BACKEND_ENV_VER=${BACKEND_ENV_VER}" >> $GITHUB_ENV
           echo "FRONTEND_ENV_VER=${FRONTEND_ENV_VER}" >> $GITHUB_ENV
 
-      - name: Backend release skipped
-        if: ${{ env.BACKEND_RUNNING_VER == env.BACKEND_ENV_VER }}
-        run: 'echo "Backend already running the expected lambda version: ${{ env.BACKEND_RUNNING_VER }}"'
-
-      - name: Frontend release skipped
-        if: ${{ env.FRONTEND_RUNNING_VER == env.FRONTEND_ENV_VER }}
-        run: 'echo "Frontend already running the expected lambda version: ${{ env.BACKEND_RUNNING_VER }}"'
-
       - name: Migrate DB
         if: ${{ env.BACKEND_RUNNING_VER != env.BACKEND_ENV_VER }}
         run: |
