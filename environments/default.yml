@@ -1,13 +1,13 @@
 
 frontend:
-  deployment_id: 9
-  version: 1.1.0
+  deployment_id: 10
+  version: 1.2.0
   config_file: default-frontend.ts
   deployment_prefix: default
 
 backend:
-  deployment_id: 4
-  version: 1.0.0
+  deployment_id: 5
+  version: 1.1.0
   config_file: default-backend.yml
   public_key_file: default-public.pem
   private_key_file: default-private.pem
