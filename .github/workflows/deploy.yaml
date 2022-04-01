@@ -10,6 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         component: [ frontend, backend ]
         environment: [ default, tezos ]
