@@ -1,7 +1,7 @@
 
 frontend:
-  deployment_id: 16
-  version: 1.7.0
+  deployment_id: 17
+  version: 1.8.0
   config_file: default-frontend.ts
   deployment_prefix: default
 
