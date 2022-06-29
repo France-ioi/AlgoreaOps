@@ -1,6 +1,6 @@
 
 frontend:
-  deployment_id: 20
+  deployment_id: 21
   version: 1.9.2
   config_file: default-frontend.ts
   deployment_prefix: default
