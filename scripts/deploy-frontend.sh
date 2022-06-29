@@ -48,13 +48,13 @@ cp ${ENV_DIR}/configs/${CONFIG_FILE} ${APP_BUILD_DIR}/src/environments/environme
 # Build
 cd ${APP_BUILD_DIR}
 npm install
-npm run injectDeployUrlForAssets --url='//assets.algorea.org/deployments/${DEPLOY_DIR}/en/'
+npm run injectDeployUrlForAssets --url="//assets.algorea.org/deployments/${DEPLOY_DIR}/en/"
 npx ng build --configuration production-en --base-href / --deploy-url //assets.algorea.org/deployments/${DEPLOY_DIR}/en/
 aws s3 sync ./dist/algorea/ s3://algorea-static/deployments/${DEPLOY_DIR} --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400' ${AWS_S3_EXTRA_ARGS}
 aws s3 cp ./dist/algorea/en/index.html s3://algorea-static/deployments/${DEPLOY_DIR}/en/index.html --acl public-read --cache-control 'max-age=300' ${AWS_S3_EXTRA_ARGS}
 rm -rf ./dist/algorea
 git reset --hard
-npm run injectDeployUrlForAssets --url='//assets.algorea.org/deployments/${DEPLOY_DIR}/fr/'
+npm run injectDeployUrlForAssets --url="//assets.algorea.org/deployments/${DEPLOY_DIR}/fr/"
 npx ng build --configuration production-fr --base-href / --deploy-url //assets.algorea.org/deployments/${DEPLOY_DIR}/fr/
 aws s3 sync ./dist/algorea/ s3://algorea-static/deployments/${DEPLOY_DIR} --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400' ${AWS_S3_EXTRA_ARGS}
 aws s3 cp ./dist/algorea/fr/index.html s3://algorea-static/deployments/${DEPLOY_DIR}/fr/index.html --acl public-read --cache-control 'max-age=300' ${AWS_S3_EXTRA_ARGS}
