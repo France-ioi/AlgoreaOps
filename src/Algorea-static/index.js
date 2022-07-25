@@ -2,7 +2,7 @@ var AWS = require('aws-sdk');
 
 exports.handler = function(event, context, callback) {
 
-	var debug = !!parseInt(process.env.DEBUG);
+	var debug = process.env.DEBUG && process.env.DEBUG !== '0';
 	var region = process.env.S3_REGION;
 	var bucket = process.env.S3_BUCKET;
 	var prefix = process.env.S3_PREFIX || '';
