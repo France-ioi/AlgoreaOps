@@ -1,14 +1,25 @@
 var AWS = require('aws-sdk');
+const {promises: fs, constants} = require("fs");
 
-exports.handler = async function(event, context, callback) {
+var cachedResponseS3Key = undefined;
+var cachedResponse = undefined;
+
+exports.handler = async function(event, context) {
 
 	const debug = process.env.DEBUG && process.env.DEBUG !== '0';
+	const noCache = process.env.NO_CACHE && process.env.NO_CACHE !== '0';
 	const region = process.env.S3_REGION;
 	const bucket = process.env.S3_BUCKET;
 	const prefix = process.env.S3_PREFIX || '';
 	const path = decodeURI(event.path);
 
 	if (debug) console.log('[DEBUG] event: '+JSON.stringify(event));
+
+	if (noCache) {
+		console.log('Clearing cache...')
+		cachedResponse = undefined;
+		cachedResponseS3Key = undefined;
+	}
 
 	/* Compute the s3 path mid-fix (to be prepended with `prefix` and appended with `index.html`)
 	 * /branch/anything/even/with/slashes/en/anything/afterwards -> branch/anything/even/with/slashes/en/
@@ -21,23 +32,28 @@ exports.handler = async function(event, context, callback) {
 	console.log(JSON.stringify(sufixMatch));
 	if (sufixMatch === null) {
 		console.error('Unable to deduce the s3 path prefix from path: '+path);
-		callback(null, notFoundResponse());
-		return;
+		return notFoundResponse();
 	}
-	const s3Key = prefix + (sufixMatch[1] || '') + sufixMatch[2]  + '/index.html';
+	const s3Key = prefix + (sufixMatch[1] || '') + sufixMatch[2] + '/index.html';
+
+	if (cachedResponse && cachedResponseS3Key === s3Key) {
+		console.log('Returning cached response');
+		return successResponse(cachedResponse);
+	}
 
 	console.log('Getting file on S3 with path: '+s3Key);
 
 	const s3 = new AWS.S3({ region: region });
-	return s3
-		.makeUnauthenticatedRequest('getObject', { Bucket: bucket, Key: s3Key })
-		.promise()
-		.then(successResponse)
-		.catch(err => {
-			console.error('Error from S3: '+JSON.stringify(err));
-			console.error('Region:'+region+' Bucket:'+bucket+" Key:"+s3Key);
-			return notFoundResponse();
-		});
+	try {
+		const data = await s3.makeUnauthenticatedRequest('getObject', { Bucket: bucket, Key: s3Key }).promise();
+		const resp = Buffer.from(data.Body).toString();
+		cachedResponse = resp;
+		cachedResponseS3Key = s3Key;
+		return successResponse(resp);
+	} catch(err) {
+		console.error('Error from S3: '+JSON.stringify(err)+' (Region:'+region+' Bucket:'+bucket+' Key:'+s3Key+')');
+		return notFoundResponse();
+	}
 };
 
 function notFoundResponse() {
@@ -54,16 +70,16 @@ function notFoundResponse() {
 	};
 }
 
-function successResponse(s3Data) {
+function successResponse(resp) {
 	return {
 			statusCode: 200,
 			multiValueHeaders: { // if multivalue headers are enabled for alb
-				'Content-Type': [ s3Data.ContentType ]
+				'Content-Type': [ 'text/html' ]
 			},
 			headers: { // if multivalue headers are disabled for alb
-				'Content-Type': s3Data.ContentType,
+				'Content-Type': 'text/html',
 			},
-			body: Buffer.from(s3Data.Body).toString(),
+			body: resp,
 			isBase64Encoded: false
 		};
 }
