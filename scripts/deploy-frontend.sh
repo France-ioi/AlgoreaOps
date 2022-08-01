@@ -56,7 +56,7 @@ rm -rf ./dist/algorea
 git reset --hard
 npm run injectDeployUrlForAssets --url="//assets.algorea.org/deployments/${DEPLOY_DIR}/fr/"
 npx ng build --configuration production-fr --base-href / --deploy-url //assets.algorea.org/deployments/${DEPLOY_DIR}/fr/
-aws s3 sync ./dist/algorea/ s3://algorea-static/deployments/${DEPLOY_DIR} --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400' ${AWS_S3_EXTRA_ARGS}
+aws s3 sync ./dist/algorea/ s3://algorea-static/deployments/${DEPLOY_DIR} --acl public-read --exclude "*/index.html" --cache-control 'max-age=31536000' ${AWS_S3_EXTRA_ARGS}
 aws s3 cp ./dist/algorea/fr/index.html s3://algorea-static/deployments/${DEPLOY_DIR}/fr/index.html --acl public-read --cache-control 'max-age=300' ${AWS_S3_EXTRA_ARGS}
 echo '<html><head><script>window.location.replace("en/");</script></head></html>' > dist/algorea/index.html
 aws s3 cp dist/algorea/index.html s3://algorea-static/deployments/${DEPLOY_DIR}/index.html ${AWS_S3_EXTRA_ARGS} --acl public-read --cache-control 'max-age=300' ${AWS_S3_EXTRA_ARGS}
