@@ -26,7 +26,9 @@ jobs:
       - name: Check if deployment number has been already been deployed on lambda
         run: |
           DEPLOYMENT_ID=$(yq '.${{ matrix.component }}.deployment_id' ./environments/${{ matrix.environment }}.yml)
+          echo "DEPLOYMENT_ID: ${DEPLOYMENT_ID}"
           LAMBDA_VER=$(curl -L https://franceioi-algorea.s3.eu-west-3.amazonaws.com/deployments/${{ matrix.component }}-${{ matrix.environment }}-${DEPLOYMENT_ID}.yml | yq '.lambda_version')
+          echo "LAMBDA_VER (if not empty, the lambda has already been deployed for this deployment id): ${LAMBDA_VER}"
           echo "DEPLOYMENT_ID=${DEPLOYMENT_ID}" >> $GITHUB_ENV
           echo "LAMBDA_VER=${LAMBDA_VER}" >> $GITHUB_ENV
 
