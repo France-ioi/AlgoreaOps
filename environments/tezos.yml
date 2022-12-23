@@ -1,6 +1,6 @@
 frontend:
-  deployment_id: 39
-  version: 1.21.0
+  deployment_id: 40
+  version: 1.21.1
   config_file: tezos-frontend.ts
   deployment_prefix: opentezos
 
