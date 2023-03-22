@@ -1,6 +1,6 @@
 frontend:
-  deployment_id: 54
-  version: 2.26.3
+  deployment_id: 55
+  version: 2.27.0
   config_file: tezos-frontend.ts
   deployment_prefix: opentezos
   override_files: custom-files/tezos/*
