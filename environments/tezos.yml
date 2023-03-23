@@ -6,8 +6,8 @@ frontend:
   override_files: custom-files/tezos/*
 
 backend:
-  deployment_id: 16
-  version: 1.8.0
+  deployment_id: 17
+  version: 1.8.1
   config_file: tezos-backend.yml
   public_key_file: tezos-public.pem
   private_key_file: tezos-private.pem
