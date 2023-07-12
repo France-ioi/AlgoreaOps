@@ -53,9 +53,12 @@ jobs:
           cp ../environments/configs/${CONFIG_FILE} conf/config.yaml
           chmod +x ./AlgoreaBackend-linux
           MIGRATION_SECRETS_FILE=$(yq '.backend.migration_secrets_file' ../environments/${{ github.event.inputs.environment }}.yml)
-          if [ ${MIGRATION_SECRETS_FILE} == "null" ]; then ./AlgoreaBackend-linux db-migrate
+          if [ ${MIGRATION_SECRETS_FILE} == "null" ]; then
+            echo "Migrating with default db user"
+            ./AlgoreaBackend-linux db-migrate
           else
             MIGRATION_USER=$(yq '.db_migration_user' ../environments/configs/${MIGRATION_SECRETS_FILE})
+            echo "Migrating with user ${MIGRATION_USER}"
             MIGRATION_PASS=$(yq '.db_migration_pass' ../environments/configs/${MIGRATION_SECRETS_FILE})
             ALGOREA_DATABASE__USER=${MIGRATION_USER} ALGOREA_DATABASE__PASSWD=${MIGRATION_PASS} ./AlgoreaBackend-linux db-migrate
           fi
