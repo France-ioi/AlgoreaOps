@@ -32,7 +32,7 @@ AWS_S3_EXTRA_ARGS="${AWS_EXTRA_ARGS}" # for debugging (--dryrun for instance)
 
 # Get code
 mkdir -p ${BUILD_DIR}
-curl -L https://github.com/France-ioi/AlgoreaBackend/releases/download/v${VERSION}/AlgoreaBackend-linux --output ${BUILD_DIR}/AlgoreaBackend-linux
+curl -fL https://github.com/France-ioi/AlgoreaBackend/releases/download/v${VERSION}/AlgoreaBackend-linux --output ${BUILD_DIR}/AlgoreaBackend-linux
 
 # Configure
 PUBLIC_KEY_FILE=$(yq '.backend.public_key_file' ${ENV_FILE})
