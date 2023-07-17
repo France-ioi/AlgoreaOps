@@ -1,14 +1,14 @@
 
 frontend:
-  deployment_id: 61
-  version: 2.28.1
+  deployment_id: 62
+  version: 2.32.0
   config_file: default-frontend.ts
   deployment_prefix: default
   build_fr: true
 
 backend:
-  deployment_id: 21
-  version: 1.9.3
+  deployment_id: 22
+  version: 1.10.0
   config_file: default-backend.yml
   public_key_file: default-public.pem
   private_key_file: default-private.pem
