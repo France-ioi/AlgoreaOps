@@ -11,6 +11,7 @@ on:
         options:
         - default
         - tezos
+        - default-prod
 
 jobs:
   release:
