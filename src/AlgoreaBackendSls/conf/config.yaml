@@ -1,0 +1,32 @@
+
+server:
+  rootpath: "/api/"
+  port: 8080
+  compress: false
+  domainOverride: ""
+auth:
+  loginModuleURL: https://login.france-ioi.org
+  clientID: via env var
+  clientSecret: via env var
+token:
+  platformName: algorea_backend
+  publicKeyFile: public_key.pem
+  privateKeyFile: private_key.pem
+database:
+  user: via env var
+  passwd: via env var
+  addr: via env var
+  dbname: via env var
+  net: tcp
+  allownativepasswords: true
+logging:
+  format: json # text, json
+  output: stdout # stdout, stderr, file
+  level: debug # debug, info, warning, error, fatal, panic
+  logSQLQueries: true
+  logRawSQLQueries: false
+domains:
+  -
+    domains: [default]
+    allUsersGroup: 3
+    tempUsersGroup: 2
