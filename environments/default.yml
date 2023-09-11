@@ -1,7 +1,7 @@
 
 frontend:
-  deployment_id: 66
-  version: 2.33.3
+  deployment_id: 67
+  version: 2.33.4
   config_file: default-frontend.ts
   deployment_prefix: default
   build_fr: true
