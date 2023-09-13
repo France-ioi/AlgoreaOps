@@ -1,13 +1,13 @@
 frontend:
-  deployment_id: 76
-  version: 2.33.1
+  deployment_id: 77
+  version: 2.34.0
   config_file: tezos-frontend.ts
   deployment_prefix: opentezos
   override_files: custom-files/tezos/*
 
 backend:
-  deployment_id: 18
-  version: 1.9.3
+  deployment_id: 19
+  version: 1.11.0
   config_file: tezos-backend.yml
   public_key_file: tezos-public.pem
   private_key_file: tezos-private.pem
