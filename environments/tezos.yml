@@ -6,8 +6,8 @@ frontend:
   override_files: custom-files/tezos/*
 
 backend:
-  deployment_id: 20
-  version: 2.14.0
+  deployment_id: 21
+  version: 2.14.1
   config_file: tezos-backend.yml
   public_key_file: tezos-public.pem
   private_key_file: tezos-private.pem
