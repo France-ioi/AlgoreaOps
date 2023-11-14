@@ -4,12 +4,12 @@ useDotenv: true
 
 provider:
   name: aws
-  runtime: go1.x
+  runtime: provided.al2
   region: eu-west-3
   environment:
     STAGE: ${opt:stage, 'dev'}
     ALGOREA_ENV: ${env:ALGOREA_ENV}
-    ALGOREA_LOGGING__LEVEL: ${env:ALGOREA_LOGGING__LEVEL}
+    ALGOREA_TOKEN__PLATFORMNAME: ${env:ALGOREA_TOKEN__PLATFORMNAME}
     ALGOREA_LOGGING__LOGRAWSQLQUERIES: ${env:ALGOREA_LOGGING__LOGRAWSQLQUERIES}
     ALGOREA_LOGGING__LOGSQLQUERIES: ${env:ALGOREA_LOGGING__LOGSQLQUERIES}
     ALGOREA_AUTH__CLIENTID: ${env:ALGOREA_AUTH__CLIENTID}
@@ -19,49 +19,15 @@ provider:
     ALGOREA_DATABASE__ADDR: ${env:ALGOREA_DATABASE__ADDR}
     ALGOREA_DATABASE__DBNAME: ${env:ALGOREA_DATABASE__DBNAME}
 
-# you can add statements to the Lambda function's IAM Role here
-#  iam:
-#    role:
-#      statements:
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:ListBucket"
-#          Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:PutObject"
-#          Resource:
-#            Fn::Join:
-#              - ""
-#              - - "arn:aws:s3:::"
-#                - "Ref" : "ServerlessDeploymentBucket"
-#                - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  patterns:
-#    - '!exclude-me.py'
-#    - '!exclude-me-dir/**'
-#    - include-me.py
-#    - include-me-dir/**
-
+package:
+  patterns:
+    - ./AlgoreaBackend-linux
+    - ./conf/config.yaml
+    - public_key.pem
+    - private_key.pem
+    
 functions:
   server:
-    handler: AlgoreaBackend-linux
+    handler: bootstrap
     timeout: 15
     memorySize: 2064
-
-
-# resources:
-#   Resources:
-#     ALBInvokePermission:
-#       Type: AWS::Lambda::Permission
-#       Properties:
-#         FunctionName: arn:aws:lambda:eu-west-3:269646813173:function:algoreasearch-dev-search
-#         Action: lambda:InvokeFunction
-#         Principal: elasticloadbalancing.amazonaws.com
-#         SourceArn: "arn:aws:elasticloadbalancing:eu-central-1:269646813173:targetgroup/lambda-f26tOfCEwHSNeTmxH1jw/32fd6b20ee9500df"
