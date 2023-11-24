@@ -1,7 +1,5 @@
 .serverless
 node_modules
 
-.env.*
-
 bootstrap
 *.pem

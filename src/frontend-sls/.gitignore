@@ -1,0 +1,9 @@
+.serverless
+node_modules
+
+.env.*
+
+bootstrap
+*.pem
+
+LAMBDA_VERSION

@@ -1,0 +1,25 @@
+service: alg-frontend
+frameworkVersion: '3'
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  environment:
+    STAGE: ${opt:stage, 'dev'}
+    DEBUG: ${env:DEBUG}
+    NO_CACHE: ${env:NO_CACHE}
+    S3_BUCKET: ${env:S3_BUCKET}
+    S3_PREFIX: ${env:S3_PREFIX}
+    S3_REGION: ${env:S3_REGION}
+
+package:
+  patterns:
+    - index.js
+    
+functions:
+  static-serve:
+    handler: index.handler
+    timeout: 3
+    memorySize: 1024

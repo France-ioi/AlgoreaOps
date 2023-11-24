@@ -1,7 +1,0 @@
-
-frontend:
-  deployment_id: 2
-  version: 2.33.0
-  config_file: default-prod-frontend.ts
-  deployment_prefix: default-prod
-  build_fr: true

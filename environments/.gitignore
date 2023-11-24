@@ -1,0 +1,10 @@
+
+# no private keys
+private_key.pem
+
+# no backend config
+config.yml
+
+# env files are expected to contain secrets, so shoud be encrypted
+.env.*
+!.env.*.enc

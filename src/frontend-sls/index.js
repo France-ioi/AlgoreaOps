@@ -1,5 +1,4 @@
 var AWS = require('aws-sdk');
-const {promises: fs, constants} = require("fs");
 
 var cachedResponseS3Key = undefined;
 var cachedResponse = undefined;
@@ -13,7 +12,7 @@ exports.handler = async function(event, context) {
 	const prefix = process.env.S3_PREFIX || '';
 	const path = decodeURI(event.path);
 
-	if (debug) console.log('[DEBUG] event: '+JSON.stringify(event));
+	if (debug) console.debug('event: '+JSON.stringify(event));
 
 	if (noCache) {
 		console.log('Clearing cache...')
