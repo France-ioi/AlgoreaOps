@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Encrypt a specific config file. Create a filename.enc file.
-# Usage: ./script/encrypt.sh <path-fo-file>
+# Usage: ./scripts/encrypt.sh <path-fo-file>
 #
 
 OPENSSL="openssl" # must be >1.1.1

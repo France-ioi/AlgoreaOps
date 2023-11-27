@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Decrypt all ".enc" in a specific directory
-# Usage: ./script/decrypt.sh <path>
+# Usage: ./scripts/decrypt.sh <path>
 # The password can be passed using the "PASS" env var
 #
 

@@ -1,5 +1,0 @@
-# Once deployed, a deployment setup cannot be changed. If there is a mistake, just create a new deployment.
-# Hence changing a config will only affect future deployments and so requires a new deployment id to be deployed.
-
-1:
-  version: 2.38.1

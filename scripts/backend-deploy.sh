@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script which deploys the Algorea backend
-# Requires "BACKEND_PUBLIC_KEY", "BACKEND_PRIVATE_KEY", and the AWS credential to be set in the environment
+# Requires the AWS credential to be set in the environment
 # It outputs on its last line the lambda version to be used for the release phase
 
 SCRIPT_PWD=$(pwd)
@@ -18,43 +18,44 @@ if [[ ! "$0" =~ ^./script ]]; then
   exit 1;
 fi
 
-if [[ $# -ne 1 ]]; then
-  echo "Illegal number of parameters. Usage: $0 <env>" >&2
-  exit 1
-fi
-
 if [ "x${AWS_PROFILE}" != "x" ]; then AWS_EXTRA_ARGS="${AWS_EXTRA_ARGS} --profile ${AWS_PROFILE}"; fi
 if [ "x${AWS_PROFILE}" != "x" ]; then SLS_EXTRA_ARGS="${SLS_EXTRA_ARGS} --aws-profile ${AWS_PROFILE}"; fi
-AWS_S3_EXTRA_ARGS="${AWS_S3_EXTRA_ARGS} ${AWS_EXTRA_ARGS} "
+AWS_S3_EXTRA_ARGS="${AWS_S3_EXTRA_ARGS} ${AWS_EXTRA_ARGS}"
 
-DEPLOYED_ENV=$1
+DEPLOYMENTS=${ENV_DIR}/deployments.yaml
 
-ENV_FILE=${ENV_DIR}/${DEPLOYED_ENV}/deployments/backend.yaml
+for DEPLOYED_ENV in $(yq '.backend | keys | join(" ")' ${DEPLOYMENTS}); do
 
-for DEPLOYMT_ID in $(yq 'keys | join(" ")' ${ENV_FILE}); do
+  VERSION=$(E=${DEPLOYED_ENV} yq '.backend[strenv(E)]' ${DEPLOYMENTS})
+  DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-$(./scripts/dir-hash.sh ./environments/backend/${DEPLOYED_ENV})
+  LAMBDA_VERSION=$(curl -L --fail https://alg-public.s3.eu-west-3.amazonaws.com/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION || echo "n/a")
 
-  VERSION=$(ID=${DEPLOYMT_ID} yq '.[strenv(ID)].version' ${ENV_FILE})
+  RE='^[0-9]+$'
+  if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
+    mkdir -p ${BUILD_DIR}
+    cp -r ./src/backend-sls/* ${BUILD_DIR}
+    cd ${BUILD_DIR}
 
-  cp -r ./src/backend-sls ${BUILD_DIR}
-  cd ${BUILD_DIR}
+    # Get code
+    curl -fL https://github.com/France-ioi/AlgoreaBackend/releases/download/v${VERSION}/AlgoreaBackend-linux --output bootstrap
 
-  # Get code
-  curl -fL https://github.com/France-ioi/AlgoreaBackend/releases/download/v${VERSION}/AlgoreaBackend-linux --output bootstrap
+    # set keys
+    cp -r ${ENV_DIR}/backend/${DEPLOYED_ENV}/config ${ENV_DIR}/backend/${DEPLOYED_ENV}/*.pem ${ENV_DIR}/backend/${DEPLOYED_ENV}/.env* ./
 
-  # set keys
-  rsync ${ENV_DIR}/${DEPLOYED_ENV}/config/backend/ ./ --exclude "*.enc" --exclude ".*"
+    # deploy
+    sls deploy --stage ${DEPLOYED_ENV} ${SLS_EXTRA_ARGS}
 
-  # deploy
-  sls deploy --stage ${DEPLOYED_ENV} ${SLS_EXTRA_ARGS}
+    LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-backend-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'ServerLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)
+    echo ${LAMBDA_VERSION} > LAMBDA_VERSION
+    aws s3 cp LAMBDA_VERSION s3://${S3_BUCKET}/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS}
 
-  LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-backend-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'ServerLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)
-  echo ${LAMBDA_VERSION} > LAMBDA_VERSION
-  aws s3 cp LAMBDA_VERSION s3://${S3_BUCKET}/deployments/backend/${DEPLOYED_ENV}/${DEPLOYMT_ID}/LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS}
+    cd ${SCRIPT_PWD}
 
-  cd ${SCRIPT_PWD}
-
-  # Cleanup
-  rm -rf ${BUILD_DIR}
+    # Cleanup
+    rm -rf ${BUILD_DIR}
+  else
+    echo "${DEPLOY_DIR} already deployed. Lambda version ${LAMBDA_VERSION}"
+  fi
 
 done
 

@@ -1,8 +1,7 @@
 #!/bin/bash
 #
-# Script which builds the Algorea frontend. It outputs on its last line the path the build.
-# Usage: ./scripts/frontend-build.sh <env> <deployment_id> <config_dir> <lang1> <lang2> ... 
-#        (e.g. './scripts/frontend-build.sh fioi 81 2.38.1 ./environement/fioi/config/frontend en fr')
+# Script which builds the Algorea frontend
+# Usage: ./scripts/sub/frontend-build.sh <env> <version> <deployment_dir>
 #
 
 SCRIPT_PWD=$(pwd)
@@ -16,37 +15,35 @@ if [[ ! "$0" =~ ^./script ]]; then
   exit 1;
 fi
 
-if [[ $# -le 5 ]]; then
-    echo "Illegal number of parameters. Usage: $0 <env> <deployment_id> <version> <config_dir> <lang1> <lang2> ..." >&2
+if [[ $# -ne 3 ]]; then
+    echo "Illegal number of parameters. Usage: $0 <env> <version> <deployment_dir>" >&2
     exit 1
 fi
 
 DEPLOYED_ENV=$1
-DEPLOYMT_ID=$2
-VERSION=$3
-CONFIG_DIR=$4
-shift 4
-LANGS=$@
+VERSION=$2
+DEPLOY_DIR=$3
 
-DEPLOY_DIR=${DEPLOYED_ENV}/${DEPLOYMT_ID}
-APP_BUILD_DIR=${BUILD_DIR}/AlgoreaFrontend-${VERSION}
+rm -rf ${BUILD_DIR}
+mkdir -p ${BUILD_DIR}/${DEPLOY_DIR}
 
 # Get code
-mkdir -p ${BUILD_DIR}
 curl -L https://github.com/France-ioi/AlgoreaFrontend/archive/refs/tags/v${VERSION}.tar.gz --output ${BUILD_DIR}/archive.tar.gz
 tar -xf ${BUILD_DIR}/archive.tar.gz -C ${BUILD_DIR}
+mv ${BUILD_DIR}/AlgoreaFrontend-${VERSION}/* ${BUILD_DIR}/
 
 # File override (config and assets)
-rsync -r ${CONFIG_DIR}  ${APP_BUILD_DIR}/ --exclude "*.enc" --exclude ".*"
+shopt -s extglob
+cp -r environments/frontend/${DEPLOYED_ENV}/!(*.enc|.*|build-config.yaml) ${BUILD_DIR}/ 
 
-cd ${APP_BUILD_DIR}
-rm -rf ${BUILD_DIR}/${DEPLOY_DIR}
-mkdir -p ${BUILD_DIR}/${DEPLOY_DIR}/
+# lang config
+LANGS=$(yq '.languages | join(" ")' environments/frontend/${DEPLOYED_ENV}/build-config.yaml)
+
+cd ${BUILD_DIR}
 
 for LANG in $LANGS; do 
-
   npm install
-  #npm run injectDeployUrlForAssets --url="//assets.algorea.org/deployments/${DEPLOY_DIR}/${LANG}/"
+  npm run injectDeployUrlForAssets --url="//assets.algorea.org/deployments/${DEPLOY_DIR}/${LANG}/"
   npx ng build --configuration production-${LANG} --base-href / --deploy-url //assets.algorea.org/deployments/${DEPLOY_DIR}/${LANG}/
 
   mv ./dist/algorea/${LANG} ${BUILD_DIR}/${DEPLOY_DIR}/
@@ -54,4 +51,3 @@ for LANG in $LANGS; do
 done
 
 cd ${SCRIPT_PWD}
-echo ${BUILD_DIR}/${DEPLOY_DIR}
