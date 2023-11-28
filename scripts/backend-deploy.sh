@@ -27,7 +27,8 @@ for DEPLOYED_ENV in $(yq '.backend | keys | join(" ")' ${DEPLOYMENTS}); do
 
   VERSION=$(E=${DEPLOYED_ENV} yq '.backend[strenv(E)]' ${DEPLOYMENTS})
   DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-$(./scripts/dir-hash.sh ./environments/backend/${DEPLOYED_ENV})
-  LAMBDA_VERSION=$(curl -L --fail https://alg-ops.s3.eu-west-3.amazonaws.com/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION || echo "n/a")
+  aws s3 cp s3://alg-ops/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
+  LAMBDA_VERSION=$(cat ./LAMBDA_VERSION || echo "n/a")
 
   RE='^[0-9]+$'
   if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
