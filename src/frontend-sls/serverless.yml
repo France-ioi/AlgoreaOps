@@ -4,6 +4,8 @@ useDotenv: true
 
 provider:
   name: aws
+  deploymentBucket:
+    name: alg-ops
   runtime: nodejs18.x
   region: eu-west-3
   environment:
