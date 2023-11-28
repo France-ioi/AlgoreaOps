@@ -6,7 +6,6 @@
 
 SCRIPT_PWD=$(pwd)
 BUILD_DIR=${SCRIPT_PWD}/build/backend
-S3_BUCKET=alg-public
 
 set -e
 set -x
@@ -28,7 +27,7 @@ for DEPLOYED_ENV in $(yq '.backend | keys | join(" ")' ${DEPLOYMENTS}); do
 
   VERSION=$(E=${DEPLOYED_ENV} yq '.backend[strenv(E)]' ${DEPLOYMENTS})
   DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-$(./scripts/dir-hash.sh ./environments/backend/${DEPLOYED_ENV})
-  LAMBDA_VERSION=$(curl -L --fail https://alg-public.s3.eu-west-3.amazonaws.com/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION || echo "n/a")
+  LAMBDA_VERSION=$(curl -L --fail https://alg-ops.s3.eu-west-3.amazonaws.com/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION || echo "n/a")
 
   RE='^[0-9]+$'
   if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
@@ -47,7 +46,7 @@ for DEPLOYED_ENV in $(yq '.backend | keys | join(" ")' ${DEPLOYMENTS}); do
 
     LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-backend-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'ServerLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)
     echo ${LAMBDA_VERSION} > LAMBDA_VERSION
-    aws s3 cp LAMBDA_VERSION s3://${S3_BUCKET}/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS}
+    aws s3 cp LAMBDA_VERSION s3://alg-ops/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS}
 
     cd ${SCRIPT_PWD}
 

@@ -19,7 +19,7 @@ DEPLOYMENTS=./environments/deployments.yaml
 for DEPLOYED_ENV in $(yq '.frontend | keys | join(" ")' ${DEPLOYMENTS}); do
   VERSION=$(E=${DEPLOYED_ENV} yq '.frontend[strenv(E)]' ${DEPLOYMENTS})
   DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-$(./scripts/dir-hash.sh ./environments/frontend/${DEPLOYED_ENV})
-  LAMBDA_VERSION=$(curl -L --fail https://alg-public.s3.eu-west-3.amazonaws.com/deployments/frontend/${DEPLOY_DIR}/LAMBDA_VERSION || echo "n/a")
+  LAMBDA_VERSION=$(curl -L --fail https://alg-ops.s3.eu-west-3.amazonaws.com/deployments/frontend/${DEPLOY_DIR}/LAMBDA_VERSION || echo "n/a")
 
   RE='^[0-9]+$'
   if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
