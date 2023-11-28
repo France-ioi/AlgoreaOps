@@ -1,10 +1,10 @@
 
 frontend:
 
-  fioi-prod: 2.38.1
-  tez-prod: 2.38.1
+  fioi: 2.38.1
+  tez: 2.38.1
 
 backend:
 
-  fioi-prod: 2.14.1
-  tez-prod: 2.14.1
+  fioi: 2.14.1
+  tez: 2.14.1
