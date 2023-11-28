@@ -48,6 +48,7 @@ for DEPLOYED_ENV in $(yq '.search | keys | join(" ")' ${DEPLOYMENTS}); do
 
 
     cd ${SCRIPT_PWD}
+    rm -rf ${BUILD_DIR}
 
   else
     echo "${DEPLOY_DIR} already deployed. Lambda version ${LAMBDA_VERSION}"
