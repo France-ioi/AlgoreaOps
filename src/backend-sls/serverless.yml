@@ -4,6 +4,8 @@ useDotenv: true
 
 provider:
   name: aws
+  deploymentBucket:
+    name: alg-ops
   runtime: provided.al2
   region: eu-west-3
   environment:
