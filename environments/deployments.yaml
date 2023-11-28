@@ -8,3 +8,7 @@ backend:
 
   fioi: 2.14.1
   tez: 2.14.1
+
+forum: 
+  fioi: 1.0.0
+  tez: 1.0.0

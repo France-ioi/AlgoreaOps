@@ -30,9 +30,21 @@ jobs:
       - run: ./scripts/decrypt.sh environments/backend
       - run: ./scripts/backend-deploy.sh
 
+  forum-deploy:
+    docker:
+      - image: cimg/node:16.20
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          profile_name: default
+      - run: npm install -g serverless@3.30.1
+      - run: ./scripts/forum-deploy.sh
+
 workflows:
   version: 2
   default:
     jobs:
       - frontend-deploy
       - backend-deploy
+      - forum-deploy
