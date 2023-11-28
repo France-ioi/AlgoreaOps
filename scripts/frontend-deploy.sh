@@ -2,10 +2,6 @@
 
 # Script which deploys the Algorea frontend on S3 and configure the lambda serving the index file.
 # It requires the AWS credentials to be set in the environment
-# It outputs on its last line the lambda version to be used for the release phase
-
-S3_BUCKET=alg-public
-S3_REGION=eu-west-3
 
 BUILD_DIR=./build/frontend
 SCRIPT_PWD=$(pwd)
