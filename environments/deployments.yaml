@@ -10,8 +10,8 @@ backend:
   tez: 2.14.1
 
 forum: 
-  fioi: 1.0.0
-  tez: 1.0.0
+  fioi: 1.0.1
+  tez: 1.0.1
 
 search:
   fioi: 1.0.2
