@@ -43,8 +43,8 @@ cd ${BUILD_DIR}
 
 for LANG in $LANGS; do 
   npm install
-  npm run injectDeployUrlForAssets --url="//assets.algorea.org/deployments/${DEPLOY_DIR}/${LANG}/"
-  npx ng build --configuration production-${LANG} --base-href / --deploy-url //assets.algorea.org/deployments/${DEPLOY_DIR}/${LANG}/
+  npm run injectDeployUrlForAssets --url="//d2dvl3h4927j7o.cloudfront.net/deployments/${DEPLOY_DIR}/${LANG}/"
+  npx ng build --configuration production-${LANG} --base-href / --deploy-url //d2dvl3h4927j7o.cloudfront.net/deployments/${DEPLOY_DIR}/${LANG}/
 
   mv ./dist/algorea/${LANG} ${BUILD_DIR}/${DEPLOY_DIR}/
 
