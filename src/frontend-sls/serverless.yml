@@ -18,6 +18,7 @@ provider:
 
 package:
   patterns:
+    - '!**'
     - index.js
     
 functions:

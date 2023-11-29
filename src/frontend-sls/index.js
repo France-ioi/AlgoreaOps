@@ -1,4 +1,4 @@
-var AWS = require('aws-sdk');
+const { S3 } = require('@aws-sdk/client-s3');
 
 var cachedResponseS3Key = undefined;
 var cachedResponse = undefined;
@@ -42,7 +42,7 @@ exports.handler = async function(event, context) {
 
 	console.log('Getting file on S3 with path: '+s3Key);
 
-	const s3 = new AWS.S3({ region: region });
+	const s3 = new S3({ region: region });
 	try {
 		const data = await s3.makeUnauthenticatedRequest('getObject', { Bucket: bucket, Key: s3Key }).promise();
 		const resp = Buffer.from(data.Body).toString();
