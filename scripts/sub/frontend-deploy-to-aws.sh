@@ -47,7 +47,7 @@ ENV_CONFIG=".env.${DEPLOYED_ENV}"
 echo "DEBUG=\"0\"" > $ENV_CONFIG
 echo "NO_CACHE=\"0\"" >> $ENV_CONFIG
 echo "S3_BUCKET=\"${S3_BUCKET}\"" >> $ENV_CONFIG
-echo "S3_PREFIX=\"deployments/frontend/${DEPLOY_DIR}/\"" >> $ENV_CONFIG
+echo "S3_PREFIX=\"deployments/${DEPLOY_DIR}/\"" >> $ENV_CONFIG
 echo "S3_REGION=\"${S3_REGION}\"" >> $ENV_CONFIG
 
 # deploy to lambda
