@@ -6,6 +6,14 @@ provider:
   name: aws
   deploymentBucket:
     name: alg-ops
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+          Resource:
+            - arn:aws:s3:::${env:S3_BUCKET}/deployments/${opt:stage, 'dev'}/*
   runtime: nodejs18.x
   region: eu-west-3
   environment:
