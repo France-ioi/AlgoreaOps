@@ -42,7 +42,7 @@ for DEPLOYED_ENV in $(yq '.search | keys | join(" ")' ${DEPLOYMENTS}); do
     sls deploy --stage ${DEPLOYED_ENV} ${SLS_EXTRA_ARGS}
 
     # print the lambda version
-    LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-search-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'ConnectionLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)
+    LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-search-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'SearchLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)
     echo ${LAMBDA_VERSION} > LAMBDA_VERSION
     aws s3 cp LAMBDA_VERSION s3://alg-ops/deployments/search/${DEPLOY_DIR}/LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS}
 
