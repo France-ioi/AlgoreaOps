@@ -1,4 +1,4 @@
-const { S3 } = require('@aws-sdk/client-s3');
+const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 
 var cachedResponseS3Key = undefined;
 var cachedResponse = undefined;
@@ -42,15 +42,16 @@ exports.handler = async function(event, context) {
 
 	console.log('Getting file on S3 with path: '+s3Key);
 
-	const s3 = new S3({ region: region });
+	const s3Client = new S3Client({ region: region });
 	try {
-		const data = await s3.makeUnauthenticatedRequest('getObject', { Bucket: bucket, Key: s3Key }).promise();
-		const resp = Buffer.from(data.Body).toString();
+		const command = new GetObjectCommand({ Bucket: bucket, Key: s3Key });
+		const data = await s3Client.send(command);
+		const resp = await data.Body.transformToString();
 		cachedResponse = resp;
 		cachedResponseS3Key = s3Key;
 		return successResponse(resp);
 	} catch(err) {
-		console.error('Error from S3: '+JSON.stringify(err)+' (Region:'+region+' Bucket:'+bucket+' Key:'+s3Key+')');
+		console.error('Error while fetching from S3: '+ JSON.stringify(err)+'  ['+ err.message +'] (Region:'+region+' Bucket:'+bucket+' Key:'+s3Key+')');
 		return notFoundResponse();
 	}
 };
