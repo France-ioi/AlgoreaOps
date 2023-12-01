@@ -16,6 +16,7 @@ provider:
             - arn:aws:s3:::${env:S3_BUCKET}/deployments/${opt:stage, 'dev'}/*
   runtime: nodejs18.x
   region: eu-west-3
+  logRetentionInDays: 90
   environment:
     STAGE: ${opt:stage, 'dev'}
     DEBUG: ${env:DEBUG}
