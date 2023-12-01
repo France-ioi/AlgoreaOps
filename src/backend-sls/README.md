@@ -1,19 +1,16 @@
 # Algorea Backend Serverless Deployment
 
+# Packaging
+
+Before building, the project requires (at the root of the project):
+- the app binary file named `AlgoreaBackend`
+- private and public keys, named `public_key.pem` and `private_key.pem`
+- a config file `./conf/config.yaml`
+
+Then, run `make`. Archives are build in the `build/` directory. 
+
 # Deployment
 
 ```
-sls deploy --stage prod --aws-profile ...
-```
-
-# Current deployments
-
-```
-cp ../../environments/configs/tezos-private.pem private_key.pem
-cp ../../environments/configs/tezos-public.pem public_key.pem
-curl -L https://github.com/France-ioi/AlgoreaBackend/releases/download/v2.14.1/AlgoreaBackend-linux --output ./AlgoreaBackend-linux
-sls deploy --stage tezos-prod --aws-profile algorea
-
-sls deploy --stage default-prod --aws-profile algorea
-sls deploy --stage dev --aws-profile ...
+sls deploy --stage fioi --aws-profile ...
 ```

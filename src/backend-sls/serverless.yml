@@ -22,14 +22,12 @@ provider:
     ALGOREA_DATABASE__DBNAME: ${env:ALGOREA_DATABASE__DBNAME}
 
 package:
-  patterns:
-    - ./AlgoreaBackend-linux
-    - ./conf/config.yaml
-    - public_key.pem
-    - private_key.pem
-    
+  individually: true
+
 functions:
   server:
     handler: bootstrap
+    package:
+      artifact: build/server.zip
     timeout: 15
     memorySize: 2064

@@ -37,10 +37,13 @@ for DEPLOYED_ENV in $(yq '.backend | keys | join(" ")' ${DEPLOYMENTS}); do
     cd ${BUILD_DIR}
 
     # Get code
-    curl -fL https://github.com/France-ioi/AlgoreaBackend/releases/download/v${VERSION}/AlgoreaBackend-linux --output bootstrap
+    curl -fL https://github.com/France-ioi/AlgoreaBackend/releases/download/v${VERSION}/AlgoreaBackend-linux --output AlgoreaBackend
 
     # set keys
-    cp -r ${ENV_DIR}/backend/${DEPLOYED_ENV}/config ${ENV_DIR}/backend/${DEPLOYED_ENV}/*.pem ${ENV_DIR}/backend/${DEPLOYED_ENV}/.env* ./
+    cp -r ${ENV_DIR}/backend/${DEPLOYED_ENV}/*.pem ${ENV_DIR}/backend/${DEPLOYED_ENV}/.env* ./
+
+    # buid artefacts
+    make
 
     # deploy
     sls deploy --stage ${DEPLOYED_ENV} ${SLS_EXTRA_ARGS}

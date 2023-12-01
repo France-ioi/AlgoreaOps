@@ -1,5 +1,10 @@
 .serverless
 node_modules
 
+/AlgoreaBackend*
 bootstrap
 *.pem
+/config/
+!/config/config.yaml
+
+build/
