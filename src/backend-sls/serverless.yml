@@ -31,3 +31,10 @@ functions:
       artifact: build/server.zip
     timeout: 15
     memorySize: 2064
+
+  command:
+    handler: bootstrap
+    package:
+      artifact: build/command.zip
+    timeout: 900
+    memorySize: 2064
