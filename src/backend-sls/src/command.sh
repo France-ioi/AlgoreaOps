@@ -5,6 +5,8 @@
 # The `<cmd>` is given as parameter to the ./AlgoreaBackend binary
 #
 
+# Todo: support other commands ("db-migrate" requires the db/migration dir) and check if it is safe to have the admin user for all of them
+
 set -euo pipefail
 
 # Processing
@@ -18,7 +20,7 @@ do
   REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
 
   COMMAND=$(echo ${EVENT_DATA} | cut -d\" -f2) # extract the first string from the data
-  if [[ "$COMMAND" =~ ^(db-recompute)$ ]]; then # for "db-migrate", we need the db/migration dir
+  if [[ "$COMMAND" =~ ^(db-recompute)$ ]]; then
     $LAMBDA_TASK_ROOT/AlgoreaBackend ${COMMAND}
     curl "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response"  -d "DONE with command: ${COMMAND} (data: ${EVENT_DATA})"
   else
