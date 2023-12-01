@@ -18,7 +18,7 @@ do
   REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
 
   COMMAND=$(echo ${EVENT_DATA} | cut -d\" -f2) # extract the first string from the data
-  if [[ "$COMMAND" =~ ^(db-recompute|db-migrate)$ ]]; then
+  if [[ "$COMMAND" =~ ^(db-recompute)$ ]]; then # for "db-migrate", we need the db/migration dir
     $LAMBDA_TASK_ROOT/AlgoreaBackend ${COMMAND}
     curl "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response"  -d "DONE with command: ${COMMAND} (data: ${EVENT_DATA})"
   else
