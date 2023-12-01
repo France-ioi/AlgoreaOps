@@ -5,7 +5,7 @@ export const environment: Environment = {
   apiUrl: '/api',
   oauthServerUrl: 'https://login.france-ioi.org',
   oauthClientId: '50',
-  searchApiUrl: 'https://rcjrg5ofrfttrugg26cj2x3xwi0nowdv.lambda-url.eu-west-3.on.aws',
+  searchApiUrl: 'https://74w4cx6w62uon4dtqinf6quqeu0qvunw.lambda-url.eu-west-3.on.aws',
   forumServerUrl: 'wss://i4eb4aa6ol.execute-api.eu-west-3.amazonaws.com/tezos-prod',
 
   sentryDsn: 'https://6295834d69104f54b55cc0ebe4ada310@o1167067.ingest.sentry.io/6257761',
