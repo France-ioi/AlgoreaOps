@@ -5,7 +5,7 @@ export const environment: Environment = {
   apiUrl: '/api',
   oauthServerUrl: 'https://login.france-ioi.org',
   oauthClientId: '56',
-  searchApiUrl: 'https://jyz57q4k3ytekopv6tvg5bdxaq0vlgso.lambda-url.eu-west-3.on.aws/',
+  searchApiUrl: 'https://74w4cx6w62uon4dtqinf6quqeu0qvunw.lambda-url.eu-west-3.on.aws',
   forumServerUrl: 'wss://0j8i1y8ca2.execute-api.eu-west-3.amazonaws.com/fioi',
 
   sentryDsn: 'https://6295834d69104f54b55cc0ebe4ada310@o1167067.ingest.sentry.io/6257761',
