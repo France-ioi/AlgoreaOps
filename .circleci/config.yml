@@ -53,6 +53,18 @@ jobs:
       - run: ./scripts/decrypt.sh environments/search
       - run: ./scripts/search-deploy.sh
 
+  opsbot-deploy:
+    docker:
+      - image: cimg/node:16.20
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          profile_name: default
+      - run: npm install -g serverless@3.30.1
+      - run: ./scripts/decrypt.sh environments/opsbot
+      - run: ./scripts/opsbot-deploy.sh
+
 workflows:
   version: 2
   default:
@@ -61,3 +73,4 @@ workflows:
       - backend-deploy
       - forum-deploy
       - search-deploy
+      - opsbot-deploy
