@@ -1,0 +1,58 @@
+service: alg-opsbot
+frameworkVersion: '3'
+useDotenv: true
+
+provider:
+  name: aws
+  deploymentBucket:
+    name: alg-ops
+  region: eu-west-3
+  logRetentionInDays: 14
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - 'lambda:GetAlias'
+            - 'lambda:UpdateAlias'
+          Resource: "*"
+        - Effect: Allow
+          Action: 'lambda:InvokeFunction'
+          Resource: 'arn:aws:lambda:eu-west-3:565617039749:function:alg-opsbot-worker'
+        - Effect: Allow
+          Action:
+            - 's3:ListBucket'
+          Resource: "arn:aws:s3:::alg-ops"
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+          Resource: "arn:aws:s3:::alg-ops/deployments/*"
+  
+  runtime: nodejs18.x
+  memorySize: 256
+
+  environment: 
+    STAGE: ${opt:stage, 'dev'}
+    SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
+    SLACK_TOKEN: ${env:SLACK_TOKEN}
+    SKIP_SIGNATURE_CHECK: ${env:SKIP_SIGNATURE_CHECK}
+    DEBUG: ${env:DEBUG}
+
+functions:
+  slackbot:
+    handler: src/handlers/bot.handler
+    name: alg-opsbot-slackbot
+    url: true
+    timeout: 3
+
+  worker:
+    handler: src/handlers/worker.handler
+    name: alg-opsbot-worker
+    timeout: 60
+
+package: 
+  individually: true
+
+plugins:
+  - serverless-plugin-typescript
