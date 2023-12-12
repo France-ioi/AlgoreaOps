@@ -51,6 +51,19 @@ functions:
     name: alg-opsbot-worker
     timeout: 60
 
+  warmer:
+    handler: src/handlers/warmer.handler
+    name: alg-opsbot-warmer
+    timeout: 15
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          input:
+            urls:
+              - https://beta.parcours.algorea.org/en/
+              - https://beta.parcours.algorea.org/api/
+              - https://74w4cx6w62uon4dtqinf6quqeu0qvunw.lambda-url.eu-west-3.on.aws/ # search
+
 package: 
   individually: true
 
