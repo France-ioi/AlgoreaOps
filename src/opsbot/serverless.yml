@@ -30,7 +30,7 @@ provider:
           Resource: "arn:aws:s3:::alg-ops/deployments/*"
   
   runtime: nodejs18.x
-  memorySize: 256
+  memorySize: 128
 
   environment: 
     STAGE: ${opt:stage, 'dev'}
