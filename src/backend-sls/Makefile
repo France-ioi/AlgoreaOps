@@ -22,7 +22,8 @@ command:
 	cp -r ./conf ${COMMAND_BUILD_DIR}/
 	cp -r ./public_key.pem ${COMMAND_BUILD_DIR}/
 	cp -r ./private_key.pem ${COMMAND_BUILD_DIR}/
-	cd ${COMMAND_BUILD_DIR} && zip ../command.zip bootstrap AlgoreaBackend conf/config* *.pem
+	cp -r ./db ${COMMAND_BUILD_DIR}/
+	cd ${COMMAND_BUILD_DIR} && zip ../command.zip bootstrap AlgoreaBackend conf/config* *.pem db/migrations/*
 	rm -rf ${COMMAND_BUILD_DIR}
 
 .FORCE: # force the rule using it to always re-run

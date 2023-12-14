@@ -5,8 +5,6 @@
 # The `<cmd>` is given as parameter to the ./AlgoreaBackend binary
 #
 
-# Todo: support other commands ("db-migrate" requires the db/migration dir) and check if it is safe to have the admin user for all of them
-
 set -euo pipefail
 
 # Processing

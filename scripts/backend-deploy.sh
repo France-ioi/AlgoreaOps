@@ -38,11 +38,16 @@ for DEPLOYED_ENV in $(yq '.backend | keys | join(" ")' ${DEPLOYMENTS}); do
 
     # Get code
     curl -fL https://github.com/France-ioi/AlgoreaBackend/releases/download/v${VERSION}/AlgoreaBackend-linux --output AlgoreaBackend
+    wget -qO- https://github.com/France-ioi/AlgoreaBackend/archive/refs/tags/v${VERSION}.tar.gz | tar xvz # will be in ./AlgoreaBackend-${VERSION}/
 
     # set keys
     cp -r ${ENV_DIR}/backend/${DEPLOYED_ENV}/*.pem ${ENV_DIR}/backend/${DEPLOYED_ENV}/.env* ./
 
-    # buid artefacts
+    # get db migrations
+    mkdir -p db
+    cp -r ./AlgoreaBackend-${VERSION}/db/migrations ./db/
+
+    # buid artifacts
     make
 
     # deploy
