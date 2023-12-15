@@ -42,3 +42,8 @@ functions:
       artifact: build/command.zip
     timeout: 900
     memorySize: 2064
+    events:
+      - schedule:
+          rate: cron(0 5 ? * TUE *) # 5am every Tuesday
+          input:
+            command: delete-temp-users
