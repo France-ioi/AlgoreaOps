@@ -71,20 +71,26 @@ async function handleSlackMessageEvent(message: Message): Promise<void> {
   const { channel, text } = message;
   const client = new SlackChatClient(channel);
 
-  const releaseMatch = /^release (frontend|backend) (fioi|tez) (prod) (\d+)$/.exec(text);
   if (/^help$/.test(text)) {
     await client.send(`
   Commands: 
       help - this help
       status - info about deployments and releases
+      command backend fioi|tez db-recompute|db-migrate|db-migrate-undo|delete-temp-users|propagation
       release frontend|backend fioi|tez prod <lambdaversion>`);
+    return;
+  }
 
-  } else if (/^status$/.test(text)) {
+  if (/^status$/.test(text)) {
     await Promise.all([
       client.send('Retrieving status...'),
       invokeWorkerWithTask({ channel, action: 'printStatus' }),
     ]);
-  } else if (releaseMatch !== null) {
+    return;
+  }
+
+  const releaseMatch = /^release (frontend|backend) (fioi|tez) (prod) (\d+)$/.exec(text);
+  if (releaseMatch !== null) {
     if (!releaseMatch[1] || !releaseMatch[2] || !releaseMatch[3] || !releaseMatch[4]) throw new Error('unexpected: no arg match');
     await Promise.all([
       client.send('Releasing...'),
@@ -97,9 +103,27 @@ async function handleSlackMessageEvent(message: Message): Promise<void> {
         lambdaVersion: releaseMatch[4]
       }),
     ]);
-  } else {
-    await client.send(text+': unknown command (try "help")');
+    return;
   }
+
+
+  const commandMatch = /^command (backend) (fioi|tez) ([\w -]+)$/.exec(text);
+  if (commandMatch !== null) {
+    if (!commandMatch[1] || !commandMatch[2] || !commandMatch[3]) throw new Error('unexpected: no arg match');
+    await Promise.all([
+      client.send(`Sending command to backend: ${commandMatch[3]}`),
+      invokeWorkerWithTask({
+        channel,
+        action: 'runCommand',
+        app: commandMatch[1],
+        deployEnv: commandMatch[2],
+        command: commandMatch[3]
+      }),
+    ]);
+    return;
+  }
+
+  await client.send(text+': unknown command (try "help")');
 }
 
 async function invokeWorkerWithTask(task: Task): Promise<void> {
