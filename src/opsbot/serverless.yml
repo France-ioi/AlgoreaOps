@@ -19,7 +19,9 @@ provider:
           Resource: "*"
         - Effect: Allow
           Action: 'lambda:InvokeFunction'
-          Resource: 'arn:aws:lambda:eu-west-3:565617039749:function:alg-opsbot-worker'
+          Resource:
+            - arn:aws:lambda:eu-west-3:565617039749:function:alg-opsbot-worker
+            - arn:aws:lambda:eu-west-3:565617039749:function:alg-backend-*-command
         - Effect: Allow
           Action:
             - 's3:ListBucket'

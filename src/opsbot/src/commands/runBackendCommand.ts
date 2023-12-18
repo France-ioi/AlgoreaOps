@@ -4,7 +4,7 @@ import { awsConfig } from '../libs/awsConfig';
 export async function runBackendCommand(deployEnv: string, command: string): Promise<string> {
   const client = new LambdaClient(awsConfig);
   const lambdaCmd = new InvokeCommand({
-    FunctionName: 'alg-opsbot-worker',
+    FunctionName: `alg-backend-${deployEnv}-command`,
     InvocationType: 'RequestResponse', // synchronous call
     Payload: JSON.stringify({ command }),
   });
