@@ -89,6 +89,11 @@ async function handleSlackMessageEvent(message: Message): Promise<void> {
     return;
   }
 
+  if (!isSuperUser(message.user)) {
+    await client.send('Only specific users can use the critical actions');
+    return;
+  }
+
   const releaseMatch = /^release (frontend|backend) (fioi|tez) (prod) (\d+)$/.exec(text);
   if (releaseMatch !== null) {
     if (!releaseMatch[1] || !releaseMatch[2] || !releaseMatch[3] || !releaseMatch[4]) throw new Error('unexpected: no arg match');
@@ -136,4 +141,9 @@ async function invokeWorkerWithTask(task: Task): Promise<void> {
     Payload: JSON.stringify(task),
   });
   await client.send(command);
+}
+
+function isSuperUser(userId: string): boolean {
+  const superusers = (process.env['SLACK_SUPERUSERS'] || '').split(',').map(u => u.trim());
+  return superusers.includes(userId);
 }
