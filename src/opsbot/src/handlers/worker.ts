@@ -14,7 +14,7 @@ export async function handler(event: unknown): Promise<void> {
   logIfDebug('event', event);
   const task = event as Task;
   try {
-    const slackClient = new SlackChatClient(task.channel);
+    const slackClient = new SlackChatClient(task.channel, 'worker');
     await doAction(task, slackClient);
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -32,6 +32,7 @@ async function doAction(task: Task, slackClient: SlackChatClient): Promise<void>
   } else if (task.action === 'runCommand') {
     await slackClient.send(await runBackendCommand(task.deployEnv, task.command));
   } else {
-    throw new Error('The input event is not a supported "Task": '+JSON.stringify(task));
+    await slackClient.send(`Invalid task: ${JSON.stringify(task)}`);
+    throw new Error(`The input event is not a supported "Task": ${JSON.stringify(task)}`);
   }
 }

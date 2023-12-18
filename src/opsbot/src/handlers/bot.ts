@@ -69,7 +69,7 @@ async function handleSlackMessageEvent(message: Message): Promise<void> {
   }
 
   const { channel, text } = message;
-  const client = new SlackChatClient(channel);
+  const client = new SlackChatClient(channel, 'bot');
 
   if (/^help$/.test(text)) {
     await client.send(`
