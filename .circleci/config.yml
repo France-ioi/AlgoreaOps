@@ -16,7 +16,7 @@ jobs:
           profile_name: default
       - run: npm install -g serverless@3.30.1
       - run: ./scripts/decrypt.sh environments/frontend
-      - run: ./scripts/frontend-deploy.sh
+      - run: ./scripts/frontend-deploy.sh ${CIRCLE_SHA1:0:6}
 
   backend-deploy:
     docker:
@@ -28,7 +28,7 @@ jobs:
           profile_name: default
       - run: npm install -g serverless@3.30.1
       - run: ./scripts/decrypt.sh environments/backend
-      - run: ./scripts/backend-deploy.sh
+      - run: ./scripts/backend-deploy.sh ${CIRCLE_SHA1:0:6}
 
   forum-deploy:
     docker:
@@ -39,7 +39,7 @@ jobs:
       - aws-cli/setup:
           profile_name: default
       - run: npm install -g serverless@3.30.1
-      - run: ./scripts/forum-deploy.sh
+      - run: ./scripts/forum-deploy.sh ${CIRCLE_SHA1:0:6}
 
   search-deploy:
     docker:
@@ -51,7 +51,7 @@ jobs:
           profile_name: default
       - run: npm install -g serverless@3.30.1
       - run: ./scripts/decrypt.sh environments/search
-      - run: ./scripts/search-deploy.sh
+      - run: ./scripts/search-deploy.sh ${CIRCLE_SHA1:0:6}
 
   opsbot-deploy:
     docker:
