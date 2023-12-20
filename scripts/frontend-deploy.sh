@@ -21,7 +21,7 @@ DEPLOYMENTS=./environments/deployments.yaml
 
 for DEPLOYED_ENV in $(yq '.frontend | keys | join(" ")' ${DEPLOYMENTS}); do
   VERSION=$(E=${DEPLOYED_ENV} yq '.frontend[strenv(E)]' ${DEPLOYMENTS})
-  DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-$(./scripts/dir-hash.sh ./environments/frontend/${DEPLOYED_ENV})
+  DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-$(./scripts/dir-hash.sh ./environments/frontend/${DEPLOYED_ENV} ./src/frontend-sls)
   aws s3 cp s3://alg-ops/deployments/frontend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
   LAMBDA_VERSION=$(cat ./LAMBDA_VERSION || echo "n/a")
 
