@@ -1,0 +1,34 @@
+service: alg-backend-propagation
+frameworkVersion: '3'
+useDotenv: true
+
+provider:
+  name: aws
+  deploymentBucket:
+    name: alg-ops
+  runtime: nodejs18.x
+  region: eu-west-3
+  logRetentionInDays: 90
+  environment:
+    STAGE: ${opt:stage, 'dev'}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: lambda:InvokeFunction
+          Resource:
+            - arn:aws:lambda:eu-west-3:565617039749:function:alg-backend-${opt:stage}-command
+
+package:
+  individually: true
+
+functions:
+
+  propagate:
+    name: alg-backend-propagation-${opt:stage}
+    handler: src/propagation.handler
+    url: true
+    timeout: 5
+
+plugins:
+  - serverless-plugin-typescript
