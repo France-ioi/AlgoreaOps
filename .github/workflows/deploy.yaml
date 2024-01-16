@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         component: [ frontend, backend ]
-        environment: [ default, tezos, default-prod ]
+        environment: [ default, tezos ]
     steps:
       - uses: actions/checkout@v2
       - uses: mikefarah/yq@v4.21.1
