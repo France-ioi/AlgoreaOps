@@ -8,7 +8,7 @@ jobs:
   frontend-deploy:
     working_directory: /home/circleci/project
     docker:
-      - image: cimg/node:16.20
+      - image: cimg/node:18.13
     executor: aws-cli/default
     steps:
       - checkout
