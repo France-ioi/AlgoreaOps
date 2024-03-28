@@ -53,6 +53,7 @@ functions:
     handler: src/handlers/worker.handler
     name: alg-opsbot-worker
     timeout: 900
+    reservedConcurrency: 1
 
   warmer:
     handler: src/handlers/warmer.handler
