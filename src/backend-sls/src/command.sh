@@ -21,8 +21,8 @@ do
   echo "Extracted command: ${COMMAND}"
   if [[ "$COMMAND" =~ ^(db-recompute|db-migrate|db-migrate-undo|delete-temp-users|propagation)$ ]]; then
     echo "" > output.txt
-    OUTPUT=`$LAMBDA_TASK_ROOT/AlgoreaBackend ${COMMAND} | tee output.txt`
-    curl "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response" --data-binary "@output.txt" > /dev/null
+    OUTPUT=`$LAMBDA_TASK_ROOT/AlgoreaBackend ${COMMAND} | tee $LAMBDA_TASK_ROOT/output.txt`
+    curl "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response" --data-binary "@$LAMBDA_TASK_ROOT/output.txt" > /dev/null
   else
     curl "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/error"  -d "Invalid/unauthorized data: ${EVENT_DATA}" > /dev/null
   fi
