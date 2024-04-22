@@ -1,7 +1,7 @@
 
 frontend:
 
-  fioi: 2.39.5
+  fioi: 2.40.0
   tez: 2.38.1
 
 backend:
