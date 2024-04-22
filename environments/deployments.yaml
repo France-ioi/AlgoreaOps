@@ -6,7 +6,7 @@ frontend:
 
 backend:
 
-  fioi: 2.18.0
+  fioi: 2.18.1
   tez: 2.14.1
 
 forum: 
