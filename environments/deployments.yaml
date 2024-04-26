@@ -2,11 +2,11 @@
 frontend:
 
   fioi: 2.40.0
-  tez: 2.38.3
+  tez: 2.38.1
 
 backend:
 
-  fioi: 2.18.1
+  fioi: 2.18.3
   tez: 2.14.1
 
 forum: 
