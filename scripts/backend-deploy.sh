@@ -17,13 +17,6 @@ if [[ ! "$0" =~ ^./script ]]; then
   exit 1;
 fi
 
-if [[ $# -lt 1 ]]; then
-  echo "Should give one parameter: the hash" >&2
-  exit 1
-fi
-
-HASH=$1
-
 if [ "x${AWS_PROFILE}" != "x" ]; then AWS_EXTRA_ARGS="${AWS_EXTRA_ARGS} --profile ${AWS_PROFILE}"; fi
 if [ "x${AWS_PROFILE}" != "x" ]; then SLS_EXTRA_ARGS="${SLS_EXTRA_ARGS} --aws-profile ${AWS_PROFILE}"; fi
 AWS_S3_EXTRA_ARGS="${AWS_S3_EXTRA_ARGS} ${AWS_EXTRA_ARGS}"
@@ -33,7 +26,7 @@ DEPLOYMENTS=${ENV_DIR}/deployments.yaml
 for DEPLOYED_ENV in $(yq '.backend | keys | join(" ")' ${DEPLOYMENTS}); do
 
   VERSION=$(E=${DEPLOYED_ENV} yq '.backend[strenv(E)]' ${DEPLOYMENTS})
-  DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-${HASH}
+  DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-$(./scripts/dir-hash.sh ./environments/backend/${DEPLOYED_ENV} ./src/backend-sls)
   aws s3 cp s3://alg-ops/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
   LAMBDA_VERSION=$(cat ./LAMBDA_VERSION || echo "n/a")
 

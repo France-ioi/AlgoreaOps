@@ -14,18 +14,11 @@ if [[ ! "$0" =~ ^./script ]]; then
   exit 1;
 fi
 
-if [[ $# -lt 1 ]]; then
-  echo "Should give one parameter: the hash" >&2
-  exit 1
-fi
-
-HASH=$1
-
 DEPLOYMENTS=./environments/deployments.yaml
 
 for DEPLOYED_ENV in $(yq '.search | keys | join(" ")' ${DEPLOYMENTS}); do
   VERSION=$(E=${DEPLOYED_ENV} yq '.search[strenv(E)]' ${DEPLOYMENTS})
-  DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-${HASH}
+  DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-$(./scripts/dir-hash.sh ./environments/search/${DEPLOYED_ENV})
   aws s3 cp s3://alg-ops/deployments/search/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
   LAMBDA_VERSION=$(cat ./LAMBDA_VERSION || echo "n/a")
 
