@@ -7,7 +7,11 @@ export async function textStatus(): Promise<string> {
   output += info.releases.map(r => `- ${r.function}@${r.alias} -> ${r.lambdaVersion}`).join('\n');
   output += '\nDeployments:\n';
   output += info.deployments
-    .map(de => `- ${de.app} ${de.env}\n${de.deployments.map(d => `    - ${d.deploymentId} => ${d.lambdaVersion}\n`).join('')}`).join('\n');
+    .map(de => `- ${de.app} ${de.env}\n${
+      de.deployments
+        .sort((d1, d2) => +d2.lambdaVersion - +d1.lambdaVersion)
+        .map(d => `    - ${d.deploymentId} => ${d.lambdaVersion}\n`).join('')
+    }`).join('\n');
   return output;
 }
 
