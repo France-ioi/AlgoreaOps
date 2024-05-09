@@ -76,6 +76,7 @@ async function handleSlackMessageEvent(message: Message): Promise<void> {
   Commands: 
       help - this help
       status - info about deployments and releases
+      delete frontend|backend fioi|tez <deployment-id> - undeploy the given deployment
       command backend fioi|tez db-recompute|db-migrate|db-migrate-undo|delete-temp-users|propagation
       release frontend|backend fioi|tez prod <lambdaversion>`);
     return;
@@ -91,6 +92,22 @@ async function handleSlackMessageEvent(message: Message): Promise<void> {
 
   if (!isSuperUser(message.user)) {
     await client.send('Only specific users can use the critical actions');
+    return;
+  }
+
+  const removeMatch = /^delete (frontend|backend) (fioi|tez) (\d+)$/.exec(text);
+  if (removeMatch !== null) {
+    if (!removeMatch[1] || !removeMatch[2] || !removeMatch[3]) throw new Error('unexpected: no arg match');
+    await Promise.all([
+      client.send('Deleting...'),
+      invokeWorkerWithTask({
+        channel,
+        action: 'deleteDeployment',
+        app: removeMatch[1],
+        deployEnv: removeMatch[2],
+        deploymentId: removeMatch[3]
+      }),
+    ]);
     return;
   }
 

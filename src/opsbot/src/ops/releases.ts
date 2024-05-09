@@ -1,4 +1,4 @@
-import { GetAliasCommand, LambdaClient, UpdateAliasCommand } from '@aws-sdk/client-lambda';
+import { DeleteFunctionCommand, GetAliasCommand, LambdaClient, UpdateAliasCommand } from '@aws-sdk/client-lambda';
 import { lambdaFunctionName } from './envToFunctionNames';
 import { awsConfig } from '../libs/awsConfig';
 
@@ -28,5 +28,11 @@ async function aliasInfo(client: LambdaClient, functionName: string, alias: stri
 export async function changeAliasVersion(functionName: string, alias: string, version: string): Promise<void> {
   const client = new LambdaClient(awsConfig);
   const command = new UpdateAliasCommand({ FunctionName: functionName, Name: alias, FunctionVersion: version });
+  await client.send(command);
+}
+
+export async function removeVersion(functionName: string, version: string): Promise<void> {
+  const client = new LambdaClient(awsConfig);
+  const command = new DeleteFunctionCommand({ FunctionName: functionName, Qualifier: version });
   await client.send(command);
 }

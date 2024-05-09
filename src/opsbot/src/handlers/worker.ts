@@ -3,9 +3,11 @@ import { textStatus } from '../commands/status';
 import { release } from '../commands/release';
 import { logIfDebug } from '../libs/logDebug';
 import { runBackendCommand } from '../commands/runBackendCommand';
+import { deleteDeployment } from '../commands/deleteDeployment';
 
 export type Task = { channel: string } & (
   { action: 'printStatus'} |
+  { action: 'deleteDeployment', app: string, deployEnv: string, deploymentId: string } |
   { action: 'doRelease', app: string, deployEnv: string, stage: string, lambdaVersion: string } |
   { action: 'runCommand', app: string, deployEnv: string, command: string }
 );
@@ -26,6 +28,9 @@ async function doAction(task: Task, slackClient: SlackChatClient): Promise<void>
 
   if (task.action === 'printStatus') {
     await slackClient.send(await textStatus());
+  } else if (task.action === 'deleteDeployment') {
+    await deleteDeployment(task.app, task.deployEnv, task.deploymentId);
+    await slackClient.send('Deployment deleted');
   } else if (task.action === 'doRelease') {
     await release(task.app, task.deployEnv, task.stage, task.lambdaVersion);
     await slackClient.send('Release done');
