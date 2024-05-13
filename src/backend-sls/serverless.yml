@@ -31,7 +31,7 @@ functions:
     handler: bootstrap
     package:
       artifact: build/server.zip
-    timeout: 15
+    timeout: 60
     memorySize: 2064
 
   command:
