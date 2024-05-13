@@ -95,7 +95,7 @@ async function handleSlackMessageEvent(message: Message): Promise<void> {
     return;
   }
 
-  const removeMatch = /^delete (frontend|backend) (fioi|tez) (\d+)$/.exec(text);
+  const removeMatch = /^delete (frontend|backend) (fioi|tez) ([\da-f.-]+)$/.exec(text);
   if (removeMatch !== null) {
     if (!removeMatch[1] || !removeMatch[2] || !removeMatch[3]) throw new Error('unexpected: no arg match');
     await Promise.all([
