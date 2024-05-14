@@ -72,6 +72,7 @@ functions:
               - https://beta.parcours.algorea.org/en/
               - https://beta.parcours.algorea.org/api/
               - https://74w4cx6w62uon4dtqinf6quqeu0qvunw.lambda-url.eu-west-3.on.aws/ # search
+              - https://awc2x5cps5hkakahhove6uqhyu0tffzi.lambda-url.eu-west-3.on.aws/ # propagation end-point
 
 package: 
   individually: true
