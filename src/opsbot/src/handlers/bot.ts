@@ -2,10 +2,7 @@ import { LambdaFunctionURLEvent, LambdaFunctionURLResult } from 'aws-lambda';
 import { formatJSONResponse } from '../libs/formatJson';
 import { validateSlackSign } from '../libs/slackSignature';
 import { logIfDebug } from '../libs/logDebug';
-import { SlackChatClient } from '../libs/slackChatClient';
-import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
-import { awsConfig } from '../libs/awsConfig';
-import { Task } from './worker';
+import { parseBotCommand } from '../botCommands/parse';
 
 export async function handler(event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResult> {
   logIfDebug('event', event);
@@ -68,96 +65,8 @@ async function handleSlackMessageEvent(message: Message): Promise<void> {
     return;
   }
 
-  const { channel, text } = message;
-  const client = new SlackChatClient(channel, 'bot');
-
-  if (/^help$/.test(text)) {
-    await client.send(`
-  Commands: 
-      help - this help
-      status - info about deployments and releases
-      delete frontend|backend fioi|tez <deployment-id> - undeploy the given deployment
-      command backend fioi|tez db-recompute|db-migrate|db-migrate-undo|delete-temp-users|propagation
-      release frontend|backend fioi|tez prod <lambdaversion>`);
-    return;
-  }
-
-  if (/^status$/.test(text)) {
-    await Promise.all([
-      client.send('Retrieving status...'),
-      invokeWorkerWithTask({ channel, action: 'printStatus' }),
-    ]);
-    return;
-  }
-
-  if (!isSuperUser(message.user)) {
-    await client.send('Only specific users can use the critical actions');
-    return;
-  }
-
-  const removeMatch = /^delete (frontend|backend) (fioi|tez) ([\da-f.-]+)$/.exec(text);
-  if (removeMatch !== null) {
-    if (!removeMatch[1] || !removeMatch[2] || !removeMatch[3]) throw new Error('unexpected: no arg match');
-    await Promise.all([
-      client.send('Deleting...'),
-      invokeWorkerWithTask({
-        channel,
-        action: 'deleteDeployment',
-        app: removeMatch[1],
-        deployEnv: removeMatch[2],
-        deploymentId: removeMatch[3]
-      }),
-    ]);
-    return;
-  }
-
-  const releaseMatch = /^release (frontend|backend) (fioi|tez) (prod) (\d+)$/.exec(text);
-  if (releaseMatch !== null) {
-    if (!releaseMatch[1] || !releaseMatch[2] || !releaseMatch[3] || !releaseMatch[4]) throw new Error('unexpected: no arg match');
-    await Promise.all([
-      client.send('Releasing...'),
-      invokeWorkerWithTask({
-        channel,
-        action: 'doRelease',
-        app: releaseMatch[1],
-        deployEnv: releaseMatch[2],
-        stage: releaseMatch[3],
-        lambdaVersion: releaseMatch[4]
-      }),
-    ]);
-    return;
-  }
-
-
-  const commandMatch = /^command (backend) (fioi|tez) ([\w -]+)$/.exec(text);
-  if (commandMatch !== null) {
-    if (!commandMatch[1] || !commandMatch[2] || !commandMatch[3]) throw new Error('unexpected: no arg match');
-    await Promise.all([
-      client.send(`Sending command to backend: ${commandMatch[3]}`),
-      invokeWorkerWithTask({
-        channel,
-        action: 'runCommand',
-        app: commandMatch[1],
-        deployEnv: commandMatch[2],
-        command: commandMatch[3]
-      }),
-    ]);
-    return;
-  }
-
-  await client.send(text+': unknown command (try "help")');
-}
-
-async function invokeWorkerWithTask(task: Task): Promise<void> {
-  const stage = process.env['STAGE'];
-  if (!stage) throw new Error('unexpected: undefined STAGE env var');
-  const client = new LambdaClient(awsConfig);
-  const command = new InvokeCommand({
-    FunctionName: 'alg-opsbot-worker',
-    InvocationType: 'Event',
-    Payload: JSON.stringify(task),
-  });
-  await client.send(command);
+  const { channel, text, user } = message;
+  await parseBotCommand(channel, text, isSuperUser(user));
 }
 
 function isSuperUser(userId: string): boolean {
