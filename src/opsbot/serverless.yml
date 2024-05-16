@@ -53,6 +53,7 @@ functions:
     name: alg-opsbot-slackbot
     url: true
     timeout: 3
+    reservedConcurrency: 1
 
   worker:
     handler: src/handlers/worker.handler
