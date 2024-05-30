@@ -1,5 +1,18 @@
 version: 2.1
 
+parameters:
+  deploy-app:
+    type: enum
+    enum: ["auto", "frontend", "backend"]
+    default: auto
+  deploy-env:
+    type: enum
+    enum: ["auto", "frontend", "backend"]
+    default: auto
+  app-config:
+    type: string
+    default: ""
+
 orbs:
   aws-s3: circleci/aws-s3@1.0.15
   aws-cli: circleci/aws-cli@4.1.2
@@ -68,9 +81,19 @@ jobs:
 workflows:
   version: 2
   default:
+    when:
+      equal: [ auto, << pipeline.parameters.deploy-app >> ]
     jobs:
-      - frontend-deploy
-      - backend-deploy
       - forum-deploy
       - search-deploy
       - opsbot-deploy
+  frontend:
+    when:
+      equal: [ frontend, << pipeline.parameters.deploy-app >> ]
+    jobs:
+      - frontend-deploy
+  backend:
+    when:
+      equal: [ backend, << pipeline.parameters.deploy-app >> ]
+    jobs:
+      - backend-deploy
