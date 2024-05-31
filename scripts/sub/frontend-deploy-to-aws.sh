@@ -27,13 +27,15 @@ if [[ ! "$0" =~ ^./script ]]; then
   exit 1;
 fi
 
-if [[ $# -ne 2 ]]; then
-    echo "Illegal number of parameters. Usage: $0 <build_dir> <deploy_dir> (e.g. './scripts/frontend-deploy-to-aws.sh ./build fioi-82')" >&2
+if [[ $# -lt 3 ]]; then
+    echo "Illegal number of parameters. Usage: $0 <build_dir> <deploy_dir> <description>" >&2
     exit 1
 fi
 
 DEPLOYED_ENV=$1
 DEPLOY_DIR=$2
+shift 2
+DESCRIPTION="$@"
 
 # upload to S3
 aws s3 sync ${BUILD_DIR}/${DEPLOY_DIR} s3://${S3_BUCKET}/deployments/${DEPLOY_DIR} --exclude "*/index.html" --cache-control 'max-age=86400' ${AWS_S3_EXTRA_ARGS}
@@ -51,7 +53,7 @@ echo "S3_PREFIX=\"deployments/${DEPLOY_DIR}/\"" >> $ENV_CONFIG
 echo "S3_REGION=\"${S3_REGION}\"" >> $ENV_CONFIG
 
 # deploy to lambda
-sls deploy --stage ${DEPLOYED_ENV} ${SLS_EXTRA_ARGS}
+sls deploy --stage ${DEPLOYED_ENV} --param="description=${DESCRIPTION}" ${SLS_EXTRA_ARGS} 
 
 # print the lambda version
 LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-frontend-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'StaticDashserveLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)

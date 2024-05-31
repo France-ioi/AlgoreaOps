@@ -16,12 +16,12 @@ if [[ ! "$0" =~ ^./script ]]; then
 fi
 
 if [[ $# -ne 3 ]]; then
-    echo "Illegal number of parameters. Usage: $0 <env> <version> <deployment_dir>" >&2
+    echo "Illegal number of parameters. Usage: $0 <version> <config_dir> <deployment_dir>" >&2
     exit 1
 fi
 
-DEPLOYED_ENV=$1
-VERSION=$2
+VERSION=$1
+CONFIG_DIR=$2
 DEPLOY_DIR=$3
 
 rm -rf ${BUILD_DIR}
@@ -34,10 +34,10 @@ mv ${BUILD_DIR}/AlgoreaFrontend-${VERSION}/* ${BUILD_DIR}/
 
 # File override (config and assets)
 shopt -s extglob
-cp -r environments/frontend/${DEPLOYED_ENV}/!(*.enc|.*|build-config.yaml) ${BUILD_DIR}/ 
+cp -r ${CONFIG_DIR}/!(*.enc|.*|build-config.yaml) ${BUILD_DIR}/ 
 
 # lang config
-LANGS=$(yq '.languages | join(" ")' environments/frontend/${DEPLOYED_ENV}/build-config.yaml)
+LANGS=$(yq '.languages | join(" ")' ${CONFIG_DIR}/build-config.yaml)
 
 cd ${BUILD_DIR}
 

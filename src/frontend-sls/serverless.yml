@@ -35,3 +35,4 @@ functions:
     handler: index.handler
     timeout: 3
     memorySize: 1024
+    description: ${param:description}
