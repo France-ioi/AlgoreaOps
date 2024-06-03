@@ -33,6 +33,7 @@ functions:
       artifact: build/server.zip
     timeout: 60
     memorySize: 2064
+    description: ${param:description}
 
   command:
     handler: bootstrap

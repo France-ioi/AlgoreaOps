@@ -43,8 +43,9 @@ jobs:
       - aws-cli/setup:
           profile_name: default
       - run: npm install -g serverless@3.30.1
-      - run: ./scripts/decrypt.sh environments/backend
-      - run: ./scripts/backend-deploy.sh
+      - run: ./scripts/get-config.sh ./config backend << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-app-config >>
+      - run: ./scripts/decrypt.sh ./config
+      - run: ./scripts/backend-deploy.sh << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> ./config
 
   forum-deploy:
     docker:
