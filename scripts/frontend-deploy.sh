@@ -31,14 +31,15 @@ CONFIG_HASH=$(git rev-parse --short HEAD)
 cd $SCRIPT_PWD
 
 SCRIPT_HASH=$(git log -1 --pretty="format:%h" -- ./src/frontend-sls)
-DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-${CONFIG_HASH}-${SCRIPT_HASH}
+FULLVERSION=${VERSION}-${CONFIG_HASH}-${SCRIPT_HASH}
+DEPLOY_DIR=${DEPLOYED_ENV}/${FULLVERSION}
 aws s3 cp s3://alg-ops/deployments/frontend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
 LAMBDA_VERSION=$(cat ./LAMBDA_VERSION || echo "n/a")
 
 RE='^[0-9]+$'
 if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
   ./scripts/sub/frontend-build.sh ${VERSION} ${CONFIG_DIR} ${DEPLOY_DIR}
-  ./scripts/sub/frontend-deploy-to-aws.sh ${DEPLOYED_ENV} ${DEPLOY_DIR} "v${VERSION} config:${CONFIG_HASH} scripts:${SCRIPT_HASH}"
+  ./scripts/sub/frontend-deploy-to-aws.sh ${DEPLOYED_ENV} ${DEPLOY_DIR} ${FULLVERSION}
 else
   echo "${DEPLOY_DIR} already deployed. Lambda version ${LAMBDA_VERSION}"
 fi

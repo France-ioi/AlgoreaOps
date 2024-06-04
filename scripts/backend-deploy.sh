@@ -33,7 +33,8 @@ CONFIG_HASH=$(git rev-parse --short HEAD)
 cd $SCRIPT_PWD
 
 SCRIPT_HASH=$(git log -1 --pretty="format:%h" -- ./src/backend-sls)
-DEPLOY_DIR=${DEPLOYED_ENV}/${VERSION}-${CONFIG_HASH}-${SCRIPT_HASH}
+FULLVERSION=${VERSION}-${CONFIG_HASH}-${SCRIPT_HASH}
+DEPLOY_DIR=${DEPLOYED_ENV}/${FULLVERSION}
 aws s3 cp s3://alg-ops/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
 LAMBDA_VERSION=$(cat ./LAMBDA_VERSION || echo "n/a")
 
@@ -58,7 +59,7 @@ if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
   make
 
   # deploy
-  sls deploy --stage ${DEPLOYED_ENV} --param="description=v${VERSION} config:${CONFIG_HASH} scripts:${SCRIPT_HASH}" ${SLS_EXTRA_ARGS}
+  sls deploy --stage ${DEPLOYED_ENV} --param="description=${FULLVERSION}" ${SLS_EXTRA_ARGS}
 
   LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-backend-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'ServerLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)
   echo ${LAMBDA_VERSION} > LAMBDA_VERSION
