@@ -2,6 +2,7 @@ import { deleteDeployment } from './deleteDeployment';
 import { release } from './release';
 import { runBackendCommand } from './runBackendCommand';
 import { textStatus } from './status';
+import { deploy } from './deploy';
 import { SlackChatClient } from '../libs/slackChatClient';
 import { Task } from './tasks';
 
@@ -18,6 +19,8 @@ export async function parseAction(task: Task): Promise<void> {
     await slackClient.send('Release done');
   } else if (task.action === 'runCommand') {
     await slackClient.send(await runBackendCommand(task.deployEnv, task.command));
+  } else if (task.action === 'deploy') {
+    await deploy(task, slackClient);
   } else {
     await slackClient.send(`Invalid task: ${JSON.stringify(task)}`);
     throw new Error(`The input event is not a supported "Task": ${JSON.stringify(task)}`);

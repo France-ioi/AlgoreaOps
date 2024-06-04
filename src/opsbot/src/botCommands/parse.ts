@@ -5,6 +5,7 @@ import { Task } from '../workerTasks/tasks';
 import { parseStatus } from './status';
 import { parseRelease } from './release';
 import { parseCommand } from './command';
+import { parseDeploy } from './deploy';
 
 type CommandCheck = (channel: string, text: string) => Task|undefined;
 
@@ -21,12 +22,12 @@ export async function parseBotCommand(channel: string, text: string, isSuperUser
 
   v2 WIP:
   Commands:
-      deploy <env> <app> <app-version> [<app-config>] [force]
+      deploy <app> <env> <app-version> [<app-config>]
       delete frontend|backend fioi|tez <deployment-id> - undeploy the given deployment
 
   Where:
-      env := fioi-prod|fioi-stag
-      app := frontend | backend
+      app := frontend|backend
+      env := fioi-prod
       app-version: in x.y.z format
       app-config: commit hash of config, if ommitted used the last one from https://github.com/France-ioi/AlgoreaConfigs/tree/<env>-<app>
       `);
@@ -44,7 +45,7 @@ export async function parseBotCommand(channel: string, text: string, isSuperUser
     return;
   }
 
-  const commands: CommandCheck[] = [ parseRelease, parseCommand ];
+  const commands: CommandCheck[] = [ parseRelease, parseCommand, parseDeploy ];
 
   while (task === undefined && commands.length > 0) {
     task = commands.pop()!(channel, text);
