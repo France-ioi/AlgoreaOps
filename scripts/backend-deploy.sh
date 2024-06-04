@@ -59,7 +59,7 @@ if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
   make
 
   # deploy
-  sls deploy --stage ${DEPLOYED_ENV} --param="description=${FULLVERSION} [`date +%d-%m-%Y" "%H:%M:%S%z`]" ${SLS_EXTRA_ARGS}
+  sls deploy --stage ${DEPLOYED_ENV} --param="description=${FULLVERSION} [`date +%d-%m-%Y" "%H:%M:%S%Z`]" ${SLS_EXTRA_ARGS}
 
   LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-backend-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'ServerLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)
   echo ${LAMBDA_VERSION} > LAMBDA_VERSION

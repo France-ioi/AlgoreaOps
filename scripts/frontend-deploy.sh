@@ -39,7 +39,7 @@ LAMBDA_VERSION=$(cat ./LAMBDA_VERSION || echo "n/a")
 RE='^[0-9]+$'
 if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
   ./scripts/sub/frontend-build.sh ${VERSION} ${CONFIG_DIR} ${DEPLOY_DIR}
-  ./scripts/sub/frontend-deploy-to-aws.sh ${DEPLOYED_ENV} ${DEPLOY_DIR} "${FULLVERSION} [`date +%d-%m-%Y" "%H:%M:%S%z`]"
+  ./scripts/sub/frontend-deploy-to-aws.sh ${DEPLOYED_ENV} ${DEPLOY_DIR} "${FULLVERSION} [`date +%d-%m-%Y" "%H:%M:%S%Z`]"
 else
   echo "${DEPLOY_DIR} already deployed. Lambda version ${LAMBDA_VERSION}"
 fi
