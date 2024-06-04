@@ -2,7 +2,6 @@
 
 # Script which deploys the Algorea backend
 # Requires the AWS credential to be set in the environment
-# It outputs on its last line the lambda version to be used for the release phase
 
 SCRIPT_PWD=$(pwd)
 BUILD_DIR=${SCRIPT_PWD}/build/backend
