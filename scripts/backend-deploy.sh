@@ -32,7 +32,7 @@ cd $CONFIG_DIR
 CONFIG_HASH=$(git rev-parse --short HEAD)
 cd $SCRIPT_PWD
 
-SCRIPT_HASH=$(git log -1 --pretty="format:%h" -- ./src/backend-sls)
+SCRIPT_HASH=$(git log -1 --pretty="format:%h" -- ./src/backend-sls ./scripts/backend-deploy.sh)
 FULLVERSION=${VERSION}-${CONFIG_HASH}-${SCRIPT_HASH}
 DEPLOY_DIR=${DEPLOYED_ENV}/${FULLVERSION}
 aws s3 cp s3://alg-ops/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
