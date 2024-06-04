@@ -1,58 +1,57 @@
-import { APIGatewayProxyStructuredResultV2, LambdaFunctionURLEvent } from 'aws-lambda';
-import { formatJSONResponse } from '../libs/formatJson';
 import { validateSlackSign } from '../libs/slackSignature';
 import { logIfDebug } from '../libs/logDebug';
 import { parseBotCommand } from '../botCommands/parse';
 
 export const streamHandler = awslambda.streamifyResponse(async (event, responseStream) => {
   responseStream.setContentType('application/json');
-  const response = await handler(event);
-  responseStream.write(response.body);
-  responseStream.end();
-});
-
-async function handler(event: LambdaFunctionURLEvent): Promise<APIGatewayProxyStructuredResultV2> {
   logIfDebug('event', event);
 
-  if (!event.body) return formatJSONResponse({ errorMessage: 'missing body' }, 400);
-  const eventWithBody = event as { body: string } ;
-
-  let body: { token: string, type: string, challenge: string, event?: unknown };
   try {
-    body = JSON.parse(eventWithBody.body) as { token: string, type: string, challenge: string, event?: unknown };
-  } catch (e) {
-    return formatJSONResponse({ errorMessage: 'invalid json', body: 'received: '+event.body }, 400);
-  }
-  if (!body.token) return formatJSONResponse({ errorMessage: 'missing token', body: 'received: '+event.body }, 400);
-  if (!body.type) return formatJSONResponse({ errorMessage: 'missing type', body: 'received: '+event.body }, 400);
+    if (!event.body) throw { errorMessage: 'missing body' };
+    const eventWithBody = event as { body: string } ;
 
-  if (process.env['SKIP_SIGNATURE_CHECK'] !== '1') {
+    let body: { token: string, type: string, challenge: string, event?: unknown };
     try {
-      if (!validateSlackSign(event)) {
-        return formatJSONResponse({ errorMessage: 'invalid slack signature', event: 'received: '+JSON.stringify(event) }, 400);
-      }
+      body = JSON.parse(eventWithBody.body) as { token: string, type: string, challenge: string, event?: unknown };
     } catch (e) {
-      return formatJSONResponse({ errorMessage: 'error while checking slack signature', details: e }, 400);
+      throw { errorMessage: 'invalid json', body: 'received: '+event.body };
     }
-  }
+    if (!body.token) throw { errorMessage: 'missing token', body: 'received: '+event.body };
+    if (!body.type) throw { errorMessage: 'missing type', body: 'received: '+event.body };
 
-  if (body.type === 'url_verification') {
-    if (!body.challenge) return formatJSONResponse({ errorMessage: 'missing challenge', body: 'received: '+event.body }, 400);
-    return formatJSONResponse({ challenge: body.challenge });
-  }
-  if (body.type === 'event_callback') {
-    if (body.event === undefined) return formatJSONResponse({ errorMessage: 'missing body event', body: 'received: '+event.body }, 400);
-    if ((body.event as { type: string }).type === 'message') {
-      await handleSlackMessageEvent(body.event as Message);
-    } else {
-      // eslint-disable-next-line no-console
-      console.error('unrecognised event type?');
+    if (process.env['SKIP_SIGNATURE_CHECK'] !== '1') {
+      try {
+        if (!validateSlackSign(event)) {
+          throw { errorMessage: 'invalid slack signature', event: 'received: '+JSON.stringify(event) };
+        }
+      } catch (e) {
+        throw { errorMessage: 'error while checking slack signature', details: e };
+      }
     }
-    return formatJSONResponse({});
-  }
 
-  return formatJSONResponse({ errorMessage: 'unsupported type', type: body.type }, 400);
-}
+    if (body.type === 'url_verification') {
+      if (!body.challenge) throw { errorMessage: 'missing challenge', body: 'received: '+event.body };
+      responseStream.write(JSON.stringify({ challenge: body.challenge }));
+      responseStream.end();
+    }
+    if (body.type === 'event_callback') {
+      if (body.event === undefined) throw { errorMessage: 'missing body event', body: 'received: '+event.body };
+      if ((body.event as { type: string }).type === 'message') {
+        responseStream.write('{}');
+        responseStream.end();
+        await handleSlackMessageEvent(body.event as Message);
+      } else {
+        throw { errorMessage: 'unrecognised event type', type: body.type };
+      }
+    }
+    throw { errorMessage: 'unsupported type', type: body.type };
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(JSON.stringify(e));
+    responseStream.write(JSON.stringify(e));
+    responseStream.end();
+  }
+});
 
 // https://api.slack.com/events/message
 interface Message {
