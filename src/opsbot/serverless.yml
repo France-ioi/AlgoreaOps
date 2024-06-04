@@ -50,9 +50,10 @@ provider:
 
 functions:
   slackbot:
-    handler: src/handlers/bot.handler
+    handler: src/handlers/bot.streamHandler
     name: alg-opsbot-slackbot
-    url: true
+    url:
+      invokeMode: RESPONSE_STREAM
     timeout: 3
     reservedConcurrency: 1
 

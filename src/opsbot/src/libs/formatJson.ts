@@ -1,7 +1,7 @@
-import { LambdaFunctionURLResult } from 'aws-lambda';
+import { APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
 import { logIfDebug } from './logDebug';
 
-export function formatJSONResponse(response: Record<string, unknown>, statusCode = 200): LambdaFunctionURLResult {
+export function formatJSONResponse(response: Record<string, unknown>, statusCode = 200): APIGatewayProxyStructuredResultV2 {
   const fullResp = {
     statusCode: statusCode,
     body: JSON.stringify(response)

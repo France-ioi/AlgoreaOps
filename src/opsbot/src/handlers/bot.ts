@@ -1,10 +1,17 @@
-import { LambdaFunctionURLEvent, LambdaFunctionURLResult } from 'aws-lambda';
+import { APIGatewayProxyStructuredResultV2, LambdaFunctionURLEvent } from 'aws-lambda';
 import { formatJSONResponse } from '../libs/formatJson';
 import { validateSlackSign } from '../libs/slackSignature';
 import { logIfDebug } from '../libs/logDebug';
 import { parseBotCommand } from '../botCommands/parse';
 
-export async function handler(event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResult> {
+export const streamHandler = awslambda.streamifyResponse(async (event, responseStream) => {
+  responseStream.setContentType('application/json');
+  const response = await handler(event);
+  responseStream.write(response.body);
+  responseStream.end();
+});
+
+async function handler(event: LambdaFunctionURLEvent): Promise<APIGatewayProxyStructuredResultV2> {
   logIfDebug('event', event);
 
   if (!event.body) return formatJSONResponse({ errorMessage: 'missing body' }, 400);
