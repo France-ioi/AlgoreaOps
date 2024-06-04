@@ -36,3 +36,11 @@ functions:
     timeout: 3
     memorySize: 1024
     description: ${param:description}
+
+plugins:
+  - serverless-prune-plugin
+
+custom:
+  prune:
+    automatic: true
+    number: 2

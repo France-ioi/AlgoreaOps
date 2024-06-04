@@ -50,3 +50,11 @@ functions:
           rate: cron(0 5 ? * TUE *) # 5am every Tuesday
           input:
             command: delete-temp-users
+
+plugins:
+  - serverless-prune-plugin
+
+custom:
+  prune:
+    automatic: true
+    number: 2
