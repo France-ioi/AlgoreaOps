@@ -7,8 +7,8 @@ frontend:
   build_fr: true
 
 backend:
-  deployment_id: 36
-  version: 2.18.7
+  deployment_id: 37
+  version: 2.19.0
   config_file: default-backend.yml
   public_key_file: default-public.pem
   private_key_file: default-private.pem
