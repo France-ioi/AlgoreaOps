@@ -18,6 +18,7 @@ parameters:
 orbs:
   aws-s3: circleci/aws-s3@1.0.15
   aws-cli: circleci/aws-cli@4.1.2
+  slack: circleci/slack@4.9.3
 
 jobs:
   frontend-deploy:
@@ -25,6 +26,7 @@ jobs:
     docker:
       - image: cimg/node:18.13
     executor: aws-cli/default
+    context: slack-secrets
     steps:
       - checkout
       - aws-cli/setup:
@@ -33,6 +35,14 @@ jobs:
       - run: ./scripts/get-config.sh ./config frontend << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-app-config >>
       - run: ./scripts/decrypt.sh ./config
       - run: ./scripts/frontend-deploy.sh << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> ./config
+      - slack/notify:
+          channel: algorea-ops-bot
+	        event: fail
+	        template: basic_fail_1
+      - slack/notify:
+          channel: algorea-ops-bot
+	        event: pass
+	        template: success_tagged_deploy_1
 
   backend-deploy:
     docker:
@@ -46,6 +56,14 @@ jobs:
       - run: ./scripts/get-config.sh ./config backend << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-app-config >>
       - run: ./scripts/decrypt.sh ./config
       - run: ./scripts/backend-deploy.sh << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> ./config
+      - slack/notify:
+          channel: algorea-ops-bot
+	        event: fail
+	        template: basic_fail_1
+      - slack/notify:
+          channel: algorea-ops-bot
+	        event: pass
+	        template: success_tagged_deploy_1
 
   forum-deploy:
     docker:
