@@ -16,7 +16,7 @@ interface Deployment {
 
 export async function deleteDeploymentDir(app: string, deployEnv: string, deploymentId: string): Promise<LambdaVersion> {
   const client = new S3Client(awsConfig);
-  const lambdaVersion = await getLambdaVersion(client, app, deployEnv, deploymentId);
+  const lambdaVersion = await getLambdaVersionV2(client, app, deployEnv, deploymentId);
   const command = new DeleteObjectsCommand({
     Bucket: 'alg-ops',
     Delete: {
@@ -49,12 +49,12 @@ async function allDeployedVersions(client: S3Client, app: string, env: string): 
     if (!key) throw new Error('missing "Key" in S3 listing response');
     const deploymentId = key.split('/')[3];
     if (!deploymentId) throw new Error(`unable to parse correctly deploymentId (key:${key})`);
-    const lambdaVersion = await getLambdaVersion(client, app, env, deploymentId);
+    const lambdaVersion = await getLambdaVersionV2(client, app, env, deploymentId);
     return { deploymentId, lambdaVersion };
   }));
 }
 
-async function getLambdaVersion(client: S3Client, app: string, env: string, deploymentId: string): Promise<LambdaVersion> {
+async function getLambdaVersionV2(client: S3Client, app: string, env: string, deploymentId: string): Promise<LambdaVersion> {
   const key = `deployments/${app}/${env}/${deploymentId}/LAMBDA_VERSION`;
   const command = new GetObjectCommand({ Bucket: 'alg-ops', Key: key });
   const data = await client.send(command);
@@ -62,6 +62,20 @@ async function getLambdaVersion(client: S3Client, app: string, env: string, depl
   const fileContent = await data.Body.transformToString();
   const lambdaVersion = fileContent.split('\n')[0];
   if (!deploymentId || !lambdaVersion) {
+    throw new Error(`unable to parse correctly lambdaVersion (key:${key}, file:${fileContent})`);
+  }
+  return lambdaVersion;
+}
+
+export async function getLambdaVersion(app: string, deployEnv: string, fullVersion: string): Promise<LambdaVersion> {
+  const client = new S3Client(awsConfig);
+  const key = `deployments/${app}/${deployEnv}/${fullVersion}/LAMBDA_VERSION`;
+  const command = new GetObjectCommand({ Bucket: 'alg-ops', Key: key });
+  const data = await client.send(command);
+  if (!data.Body) throw new Error('missing "Body" key in S3 get object response');
+  const fileContent = await data.Body.transformToString();
+  const lambdaVersion = fileContent.split('\n')[0];
+  if (!lambdaVersion) {
     throw new Error(`unable to parse correctly lambdaVersion (key:${key}, file:${fileContent})`);
   }
   return lambdaVersion;
