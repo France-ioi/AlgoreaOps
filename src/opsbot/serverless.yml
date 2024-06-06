@@ -8,6 +8,7 @@ provider:
     name: alg-ops
   region: eu-west-3
   logRetentionInDays: 14
+  stackName: alg-opsbot
 
   iam:
     role:
