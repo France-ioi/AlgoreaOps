@@ -1,63 +1,45 @@
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import { SlackChatClient } from '../libs/slackChatClient';
 import { awsConfig } from '../libs/awsConfig';
-import { Task } from '../workerTasks/tasks';
-import { parseStatus } from './status';
-import { parseRelease } from './release';
-import { parseCommand } from './command';
+import { Task } from '../tasks/tasks';
 import { parseDeploy } from './deploy';
+import { parseHelp } from './help';
+import { helpText } from '../tasks/printHelp';
+import { deploy } from '../tasks/deploy';
 
-type CommandCheck = (channel: string, text: string) => Task|undefined;
+interface Command {
+  superUserOnly?: boolean,
+  local: boolean,
+  parser: (channel: string, text: string) => Task|undefined,
+}
 
 export async function parseBotCommand(channel: string, text: string, isSuperUser: boolean): Promise<void> {
   const slackClient = new SlackChatClient(channel, 'bot');
+  const commands: Command[] = [
+    { parser: parseHelp, local: true },
+    { parser: parseDeploy, superUserOnly: true, local: true }
+  ];
 
-  if (/^help$/.test(text)) {
-    await slackClient.send(`
-  Commands: 
-      help - this help
-      status - info about deployments and releases
-      command backend fioi|tez db-recompute|db-migrate|db-migrate-undo|delete-temp-users|propagation
-      release frontend|backend fioi|tez prod <lambdaversion>
-
-  v2 WIP:
-  Commands:
-      deploy <app> <env> <app-version> [<app-config>]
-      delete frontend|backend fioi|tez <deployment-id> - undeploy the given deployment
-
-  Where:
-      app := frontend|backend
-      env := fioi-prod
-      app-version: in x.y.z format
-      app-config: commit hash of config, if ommitted used the last one from https://github.com/France-ioi/AlgoreaConfigs/tree/<env>-<app>
-      `);
-    return;
-  }
-
-  let task = parseStatus(channel, text);
-  if (task) {
-    await asyncInvokeWorker(task);
-    return;
-  }
-
-  if (!isSuperUser) {
-    await slackClient.send('Only specific users can use the critical actions');
-    return;
-  }
-
-  const commands: CommandCheck[] = [ parseRelease, parseCommand, parseDeploy ];
-
+  let task: Task|undefined;
   while (task === undefined && commands.length > 0) {
-    task = commands.pop()!(channel, text);
+    const command = commands.pop()!;
+    task = command.parser(channel, text);
+    if (task && (command.superUserOnly && !isSuperUser)) {
+      await slackClient.send('Only specific users can use the critical actions');
+      return;
+    }
   }
 
-  if (task) {
+  if (!task) {
+    await slackClient.send(text+': unknown action (try "help")');
+  } else if (task.action === 'printHelp') await slackClient.send(helpText());
+  else if (task.action === 'deploy') await slackClient.send(await deploy(task));
+  else {
     await Promise.all([
-      slackClient.send(`Running command '${task.action}'`),
+      slackClient.send(`Sending action to worker: '${task.action}'`),
       asyncInvokeWorker(task)
     ]);
-
-  } else await slackClient.send(text+': unknown command (try "help")');
+  }
 }
 
 async function asyncInvokeWorker(task: Task): Promise<void> {

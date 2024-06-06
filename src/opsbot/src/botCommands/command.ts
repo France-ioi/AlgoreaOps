@@ -1,4 +1,4 @@
-import { Task } from '../workerTasks/tasks';
+import { Task } from '../tasks/tasks';
 
 export function parseCommand(channel: string, text: string): Task|undefined {
   const commandMatch = /^command (backend) (fioi|tez) ([\w -]+)$/.exec(text);

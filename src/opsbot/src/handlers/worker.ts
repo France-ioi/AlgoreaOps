@@ -1,6 +1,6 @@
 import { logIfDebug } from '../libs/logDebug';
 import { parseAction } from '../workerTasks/parse';
-import { Task } from '../workerTasks/tasks';
+import { Task } from '../tasks/tasks';
 
 export async function handler(event: unknown): Promise<void> {
   logIfDebug('event', event);

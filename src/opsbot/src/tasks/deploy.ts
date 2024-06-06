@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { SlackChatClient } from '../libs/slackChatClient';
 import { DeployTask } from './tasks';
 import { request } from 'https';
 
-export async function deploy(task: DeployTask, slackChatClient: SlackChatClient): Promise<void> {
+export async function deploy(task: DeployTask): Promise<string> {
   let jobNumber = 0;
   try {
     const response = await triggerDeploy(task);
     const parsedResp = JSON.parse(response) as unknown as { number: number };
-    jobNumber = parsedResp.number;
+    jobNumber = +parsedResp.number;
   } catch (e) {
-    await slackChatClient.send(`Unable to trigger deployment: ${JSON.stringify(e)})`);
+    return `Unable to trigger deployment: ${JSON.stringify(e)})`;
   }
-  if (+jobNumber) await slackChatClient.send(`Deployment triggered (job number: ${jobNumber})`);
+  return `Deployment triggered (job number: ${jobNumber})`;
 }
 
 async function triggerDeploy(task: DeployTask): Promise<string> {
