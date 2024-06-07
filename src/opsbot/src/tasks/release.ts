@@ -8,5 +8,5 @@ export async function release({ app, deployEnv, fullVersion }: ReleaseTask): Pro
   const alias = 'released';
   const lambdaVersionId = await getLambdaVersion(app, deployEnv, fullVersion);
   await changeAliasVersion(functionName, alias, lambdaVersionId);
-  return `${functionName}: alias ${alias} changed to version ${lambdaVersionId}`;
+  return `${functionName}: alias '${alias}' changed to lambda version ${lambdaVersionId}`;
 }
