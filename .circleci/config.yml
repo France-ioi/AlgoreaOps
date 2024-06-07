@@ -36,13 +36,21 @@ jobs:
       - run: ./scripts/frontend-deploy.sh << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> ./config
       - slack/notify:
           channel: algoreaops-bot
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          channel: algoreaops-bot
-          event: pass
-          template: success_tagged_deploy_1
-
+          custom: |
+              {
+                "blocks": [
+                  {
+                    "type": "section",
+                    "fields": [
+                      {
+                        "type": "plain_text",
+                        "text": "${OUTPUTMSG}",
+                        "emoji": true
+                      }
+                    ]
+                  }
+                ]
+              }
   backend-deploy:
     docker:
       - image: cimg/node:16.20
