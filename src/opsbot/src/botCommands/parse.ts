@@ -11,7 +11,7 @@ import { release } from '../tasks/release';
 
 interface Command {
   superUserOnly?: boolean,
-  parser: (channel: string, text: string) => Task|undefined,
+  parser: (text: string) => Task|undefined,
 }
 
 export async function parseBotCommand(channel: string, text: string, isSuperUser: boolean): Promise<void> {
@@ -25,7 +25,7 @@ export async function parseBotCommand(channel: string, text: string, isSuperUser
   let task: Task|undefined;
   while (task === undefined && commands.length > 0) {
     const command = commands.pop()!;
-    task = command.parser(channel, text);
+    task = command.parser(text);
     if (task && (command.superUserOnly && !isSuperUser)) {
       await slackClient.send('Only specific users can use the critical actions');
       return;
