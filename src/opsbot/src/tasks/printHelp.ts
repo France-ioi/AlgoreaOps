@@ -1,14 +1,14 @@
 
 export function helpText(): string {
   return `
-  Commands: 
+  Commands:
       help - this help
-      status - info about deployments and releases
-      command backend fioi|tez db-recompute|db-migrate|db-migrate-undo|delete-temp-users|propagation
-
-  v3 Commands:
       deploy <app> <env> <app-version> [<app-config>]
       release <app> <env> <deployment-version>
+      command backend <env> db-recompute|db-migrate|db-migrate-undo|delete-temp-users|propagation
+
+  Outdated:
+      status - info about deployments and releases
 
   Where:
       app := frontend|backend

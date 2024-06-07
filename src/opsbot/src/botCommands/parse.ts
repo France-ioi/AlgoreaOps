@@ -8,6 +8,8 @@ import { helpText } from '../tasks/printHelp';
 import { deploy } from '../tasks/deploy';
 import { parseRelease } from './release';
 import { release } from '../tasks/release';
+import { parseCommand } from './command';
+import { runBackendCommand } from '../tasks/runBackendCommand';
 
 interface Command {
   superUserOnly?: boolean,
@@ -20,6 +22,7 @@ export async function parseBotCommand(channel: string, text: string, isSuperUser
     { parser: parseHelp },
     { parser: parseDeploy, superUserOnly: true },
     { parser: parseRelease, superUserOnly: true },
+    { parser: parseCommand, superUserOnly: true },
   ];
 
   let task: Task|undefined;
@@ -37,6 +40,7 @@ export async function parseBotCommand(channel: string, text: string, isSuperUser
   } else if (task.action === 'printHelp') await slackClient.send(helpText());
   else if (task.action === 'deploy') await slackClient.send(await deploy(task));
   else if (task.action === 'release') await slackClient.send(await release(task));
+  else if (task.action === 'runCommand') await slackClient.send(await runBackendCommand(task.deployEnv, task.command));
   else {
     await Promise.all([
       slackClient.send(`Sending action to worker: '${task.action}'`),

@@ -1,4 +1,3 @@
-import { runBackendCommand } from './runBackendCommand';
 import { textStatus } from './status';
 import { SlackChatClient } from '../libs/slackChatClient';
 import { Task } from '../tasks/tasks';
@@ -10,8 +9,6 @@ export async function parseAction(task: Task): Promise<void> {
 
   if (task.action === 'printStatus') {
     await slackClient.send(await textStatus());
-  } else if (task.action === 'runCommand') {
-    await slackClient.send(await runBackendCommand(task.deployEnv, task.command));
   } else {
     await slackClient.send(`Invalid task: ${JSON.stringify(task)}`);
     throw new Error(`The input event is not a supported "Task": ${JSON.stringify(task)}`);
