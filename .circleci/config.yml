@@ -77,6 +77,21 @@ jobs:
                         "emoji": true
                       }
                     ]
+                  },
+                  {
+                    "type": "actions",
+                    "elements": [
+                      {
+                        "type": "button",
+                        "text": {
+                          "type": "plain_text",
+                          "emoji": true,
+                          "text": "Release now"
+                        },
+                        "style": "primary",
+                        "value": "TESTVALUE"
+                      }
+                    ]
                   }
                 ]
               }
