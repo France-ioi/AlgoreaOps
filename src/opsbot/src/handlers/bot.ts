@@ -33,8 +33,7 @@ export const streamHandler = awslambda.streamifyResponse(async (event, responseS
       if (!body.challenge) throw { errorMessage: 'missing challenge', body: 'received: '+event.body };
       responseStream.write(JSON.stringify({ challenge: body.challenge }));
       responseStream.end();
-    }
-    if (body.type === 'event_callback') {
+    } else if (body.type === 'event_callback') {
       if (body.event === undefined) throw { errorMessage: 'missing body event', body: 'received: '+event.body };
       if ((body.event as { type: string }).type === 'message') {
         responseStream.write('{}');
@@ -43,8 +42,7 @@ export const streamHandler = awslambda.streamifyResponse(async (event, responseS
       } else {
         throw { errorMessage: 'unrecognised event type', type: body.type };
       }
-    }
-    throw { errorMessage: 'unsupported type', type: body.type };
+    } else throw { errorMessage: 'unsupported type', type: body.type };
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(JSON.stringify(e));
