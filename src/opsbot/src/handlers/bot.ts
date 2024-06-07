@@ -65,7 +65,7 @@ async function handleSlackMessageEvent(message: Message): Promise<void> {
 
   if (message.bot_id) {
     // eslint-disable-next-line no-console
-    console.log('Message from the bot itself. Don\'t react to it.');
+    console.log('Message from a bot. Don\'t react to it.');
     return;
   }
 
