@@ -69,9 +69,10 @@ if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
   # Cleanup
   rm -rf ${BUILD_DIR}
 
-  echo 'export OUTPUTMSG="Backend deployed for ${DEPLOYED_ENV}: ${FULLVERSION}"' >> "$BASH_ENV"
+  echo "export OUTPUTMSG=\"Backend deployed for ${DEPLOYED_ENV}: '${FULLVERSION}'\"" >> "$BASH_ENV"
 else
   echo "${DEPLOY_DIR} already deployed. Lambda version ${LAMBDA_VERSION}"
+  echo "export OUTPUTMSG=\"Backend already deployed for ${DEPLOYED_ENV}: '${FULLVERSION}'\"" >> "$BASH_ENV"
 fi
 
 

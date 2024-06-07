@@ -65,7 +65,7 @@ jobs:
                     "fields": [
                       {
                         "type": "plain_text",
-                        "text": "DONE. ${OUTPUTMSG}",
+                        "text": "${OUTPUTMSG}",
                         "emoji": true
                       }
                     ]
