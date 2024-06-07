@@ -60,7 +60,7 @@ functions:
 
   worker:
     environment: 
-      SLACK_CHANNEL: algorea-ops-bot
+      SLACK_CHANNEL: algoreaops-bot
     handler: src/handlers/worker.handler
     name: alg-opsbot-worker
     timeout: 900
