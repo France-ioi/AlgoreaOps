@@ -6,18 +6,20 @@ import { parseDeploy } from './deploy';
 import { parseHelp } from './help';
 import { helpText } from '../tasks/printHelp';
 import { deploy } from '../tasks/deploy';
+import { parseRelease } from './release';
+import { release } from '../tasks/release';
 
 interface Command {
   superUserOnly?: boolean,
-  local: boolean,
   parser: (channel: string, text: string) => Task|undefined,
 }
 
 export async function parseBotCommand(channel: string, text: string, isSuperUser: boolean): Promise<void> {
   const slackClient = new SlackChatClient(channel, 'bot');
   const commands: Command[] = [
-    { parser: parseHelp, local: true },
-    { parser: parseDeploy, superUserOnly: true, local: true }
+    { parser: parseHelp },
+    { parser: parseDeploy, superUserOnly: true },
+    { parser: parseRelease, superUserOnly: true },
   ];
 
   let task: Task|undefined;
@@ -34,6 +36,7 @@ export async function parseBotCommand(channel: string, text: string, isSuperUser
     await slackClient.send(text+': unknown action (try "help")');
   } else if (task.action === 'printHelp') await slackClient.send(helpText());
   else if (task.action === 'deploy') await slackClient.send(await deploy(task));
+  else if (task.action === 'release') await slackClient.send(await release(task));
   else {
     await Promise.all([
       slackClient.send(`Sending action to worker: '${task.action}'`),
