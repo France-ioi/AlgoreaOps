@@ -26,7 +26,6 @@ jobs:
     docker:
       - image: cimg/node:18.13
     executor: aws-cli/default
-    context: slack-secrets
     steps:
       - checkout
       - aws-cli/setup:
@@ -37,12 +36,12 @@ jobs:
       - run: ./scripts/frontend-deploy.sh << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> ./config
       - slack/notify:
           channel: algorea-ops-bot
-	        event: fail
-	        template: basic_fail_1
+          event: fail
+          template: basic_fail_1
       - slack/notify:
           channel: algorea-ops-bot
-	        event: pass
-	        template: success_tagged_deploy_1
+          event: pass
+          template: success_tagged_deploy_1
 
   backend-deploy:
     docker:
@@ -122,9 +121,11 @@ workflows:
     when:
       equal: [ frontend, << pipeline.parameters.deploy-app >> ]
     jobs:
-      - frontend-deploy
+      - frontend-deploy:
+          context: slack-secrets
   backend:
     when:
       equal: [ backend, << pipeline.parameters.deploy-app >> ]
     jobs:
-      - backend-deploy
+      - backend-deploy:
+          context: slack-secrets
