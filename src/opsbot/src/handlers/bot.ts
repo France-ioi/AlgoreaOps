@@ -1,6 +1,7 @@
 import { validateSlackSign } from '../libs/slackSignature';
 import { logIfDebug } from '../libs/logDebug';
 import { parseBotCommand } from '../botCommands/parse';
+import { SlackChatClient } from '../libs/slackChatClient';
 
 export const streamHandler = awslambda.streamifyResponse(async (event, responseStream) => {
   responseStream.setContentType('application/json');
@@ -44,10 +45,7 @@ export const streamHandler = awslambda.streamifyResponse(async (event, responseS
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e);
-    if (responseStream.writable) {
-      responseStream.write(JSON.stringify(e));
-      responseStream.end();
-    }
+    if (process.env.SLACK_CHANNEL) await new SlackChatClient(process.env.SLACK_CHANNEL, 'bot').send(`ERROR: ${String(e)}`);
   }
 });
 
