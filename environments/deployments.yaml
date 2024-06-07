@@ -1,14 +1,4 @@
 
-frontend:
-
-  fioi: 2.40.2
-  tez: 2.38.1
-
-backend:
-
-  fioi: 2.19.0
-  tez: 2.14.1
-
 forum: 
   fioi: 1.0.1
   tez: 1.0.1

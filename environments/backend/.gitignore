@@ -1,3 +1,0 @@
-# env files are expected to contain secrets, so shoud be encrypted
-.env.*
-!.env.*.enc
