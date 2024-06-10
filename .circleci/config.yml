@@ -111,7 +111,7 @@ jobs:
                     "fields": [
                       {
                         "type": "plain_text",
-                        "text": "Error on frontend deployment << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> << pipeline.parameters.deploy-app-config >>",
+                        "text": "Error on backend deployment << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> << pipeline.parameters.deploy-app-config >>",
                         "emoji": true
                       }
                     ]
