@@ -36,6 +36,7 @@ jobs:
       - run: ./scripts/frontend-deploy.sh << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> ./config
       - slack/notify:
           channel: algoreaops-bot
+          event: pass
           custom: |
               {
                 "blocks": [
@@ -45,6 +46,24 @@ jobs:
                       {
                         "type": "plain_text",
                         "text": "${OUTPUTMSG}",
+                        "emoji": true
+                      }
+                    ]
+                  }
+                ]
+              }
+      - slack/notify:
+          channel: algoreaops-bot
+          event: fail
+          custom: |
+              {
+                "blocks": [
+                  {
+                    "type": "section",
+                    "fields": [
+                      {
+                        "type": "plain_text",
+                        "text": "Error on frontend deployment << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> << pipeline.parameters.deploy-app-config >>",
                         "emoji": true
                       }
                     ]
@@ -65,6 +84,7 @@ jobs:
       - run: ./scripts/backend-deploy.sh << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> ./config
       - slack/notify:
           channel: algoreaops-bot
+          event: pass
           custom: |
               {
                 "blocks": [
@@ -80,7 +100,24 @@ jobs:
                   }
                 ]
               }
-
+      - slack/notify:
+          channel: algoreaops-bot
+          event: fail
+          custom: |
+              {
+                "blocks": [
+                  {
+                    "type": "section",
+                    "fields": [
+                      {
+                        "type": "plain_text",
+                        "text": "Error on frontend deployment << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> << pipeline.parameters.deploy-app-config >>",
+                        "emoji": true
+                      }
+                    ]
+                  }
+                ]
+              }
   forum-deploy:
     docker:
       - image: cimg/node:16.20
