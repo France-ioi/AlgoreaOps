@@ -24,6 +24,8 @@ VERSION=$1
 CONFIG_DIR=$2
 DEPLOY_DIR=$3
 
+shopt -s dotglob # include .* files in the mv/cp operations
+
 rm -rf ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}/${DEPLOY_DIR}
 
@@ -31,6 +33,7 @@ mkdir -p ${BUILD_DIR}/${DEPLOY_DIR}
 curl -L https://github.com/France-ioi/AlgoreaFrontend/archive/refs/tags/v${VERSION}.tar.gz --output ${BUILD_DIR}/archive.tar.gz
 tar -xf ${BUILD_DIR}/archive.tar.gz -C ${BUILD_DIR}
 mv ${BUILD_DIR}/AlgoreaFrontend-${VERSION}/* ${BUILD_DIR}/
+rm -r ${BUILD_DIR}/AlgoreaFrontend-${VERSION}
 
 # File override (config and assets)
 shopt -s extglob
