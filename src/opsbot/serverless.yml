@@ -21,7 +21,6 @@ provider:
         - Effect: Allow
           Action: 'lambda:InvokeFunction'
           Resource:
-            - arn:aws:lambda:eu-west-3:565617039749:function:alg-opsbot-worker
             - arn:aws:lambda:eu-west-3:565617039749:function:alg-backend-*-command
         - Effect: Allow
           Action:
@@ -55,15 +54,7 @@ functions:
     name: alg-opsbot-slackbot
     url:
       invokeMode: RESPONSE_STREAM
-    timeout: 3
-    reservedConcurrency: 1
-
-  worker:
-    environment: 
-      SLACK_CHANNEL: algoreaops-bot
-    handler: src/handlers/worker.handler
-    name: alg-opsbot-worker
-    timeout: 900
+    timeout: 60 # it needs to responds in <3sec to Slack, but then it can still do processing
     reservedConcurrency: 1
 
   warmer:
