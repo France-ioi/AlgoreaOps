@@ -32,19 +32,18 @@ mkdir -p ${BUILD_DIR}/${DEPLOY_DIR}
 # Get code
 curl -L https://github.com/France-ioi/AlgoreaFrontend/archive/refs/tags/v${VERSION}.tar.gz --output ${BUILD_DIR}/archive.tar.gz
 tar -xf ${BUILD_DIR}/archive.tar.gz -C ${BUILD_DIR}
-mv ${BUILD_DIR}/AlgoreaFrontend-${VERSION}/* ${BUILD_DIR}/
-rm -r ${BUILD_DIR}/AlgoreaFrontend-${VERSION}
 
 # File override (config and assets)
 shopt -s extglob
-cp -r ${CONFIG_DIR}/!(*.enc|.*|build-config.yaml) ${BUILD_DIR}/ 
+cp -r ${CONFIG_DIR}/!(*.enc|.*|build-config.yaml) ${BUILD_DIR}/AlgoreaFrontend-${VERSION}/
 
 # lang config
 LANGS=$(yq '.languages | join(" ")' ${CONFIG_DIR}/build-config.yaml)
 
-cd ${BUILD_DIR}
-
 for LANG in $LANGS; do 
+  cp -r ${BUILD_DIR}/AlgoreaFrontend-${VERSION} ${BUILD_DIR}/${LANG}
+  cd ${BUILD_DIR}/${LANG}
+
   npm install
   npm run injectDeployUrlForAssets --url="//d2dvl3h4927j7o.cloudfront.net/deployments/${DEPLOY_DIR}/${LANG}/"
   npx ng build --configuration production-${LANG} --base-href / --deploy-url //d2dvl3h4927j7o.cloudfront.net/deployments/${DEPLOY_DIR}/${LANG}/
