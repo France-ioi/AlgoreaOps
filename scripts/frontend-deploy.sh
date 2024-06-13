@@ -45,3 +45,4 @@ else
   echo "${DEPLOY_DIR} already deployed. Lambda version ${LAMBDA_VERSION}"
   echo "export OUTPUTMSG=\"Frontend already deployed for ${DEPLOYED_ENV}: '${FULLVERSION}'\"" >> "$BASH_ENV"
 fi
+echo "export DEPLOYED_VERSION=${FULLVERSION}" >> "$BASH_ENV"
