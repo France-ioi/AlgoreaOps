@@ -69,6 +69,8 @@ export const streamHandler = awslambda.streamifyResponse(async (event, responseS
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e);
+    responseStream.emit('error', e);
+    responseStream.end();
     if (process.env.SLACK_CHANNEL) await new SlackChatClient(process.env.SLACK_CHANNEL, 'bot').send(`ERROR: ${String(e)}`);
   }
 });
