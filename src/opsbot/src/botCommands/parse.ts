@@ -1,6 +1,4 @@
-import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import { SlackChatClient } from '../libs/slackChatClient';
-import { awsConfig } from '../libs/awsConfig';
 import { Task } from '../tasks/tasks';
 import { parseDeploy } from './deploy';
 import { parseHelp } from './help';
@@ -10,6 +8,8 @@ import { parseRelease } from './release';
 import { release } from '../tasks/release';
 import { parseCommand } from './command';
 import { runBackendCommand } from '../tasks/runBackendCommand';
+import { textStatus } from '../tasks/status';
+import { parseStatus } from './status';
 
 interface Command {
   superUserOnly?: boolean,
@@ -23,6 +23,7 @@ export async function parseBotCommand(channel: string, text: string, isSuperUser
     { parser: parseDeploy, superUserOnly: true },
     { parser: parseRelease, superUserOnly: true },
     { parser: parseCommand, superUserOnly: true },
+    { parser: parseStatus },
   ];
 
   let task: Task|undefined;
@@ -41,22 +42,8 @@ export async function parseBotCommand(channel: string, text: string, isSuperUser
   else if (task.action === 'deploy') await slackClient.send(await deploy(task));
   else if (task.action === 'release') await slackClient.send(await release(task));
   else if (task.action === 'runCommand') await slackClient.send(await runBackendCommand(task.deployEnv, task.command));
+  else if (task.action === 'printStatus') await slackClient.send(await textStatus());
   else {
-    await Promise.all([
-      slackClient.send(`Sending action to worker: '${task.action}'`),
-      asyncInvokeWorker(task)
-    ]);
+    await slackClient.send('unhandled action');
   }
-}
-
-async function asyncInvokeWorker(task: Task): Promise<void> {
-  const stage = process.env['STAGE'];
-  if (!stage) throw new Error('unexpected: undefined STAGE env var');
-  const client = new LambdaClient(awsConfig);
-  const command = new InvokeCommand({
-    FunctionName: 'alg-opsbot-worker',
-    InvocationType: 'Event',
-    Payload: JSON.stringify(task),
-  });
-  await client.send(command);
 }

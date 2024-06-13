@@ -17,6 +17,7 @@ provider:
           Action:
             - 'lambda:GetAlias'
             - 'lambda:UpdateAlias'
+            - 'lambda:ListVersionsByFunction'
           Resource: "*"
         - Effect: Allow
           Action: 'lambda:InvokeFunction'

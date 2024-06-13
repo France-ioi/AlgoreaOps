@@ -1,6 +1,6 @@
-import { getLambdaVersion } from '../ops/deployments';
+import { getLambdaVersion } from '../ops/s3deployments';
 import { lambdaFunctionName } from '../ops/envToFunctionNames';
-import { changeAliasVersion } from '../ops/releases';
+import { changeAliasVersion } from '../ops/lambdaFunctions';
 import { ReleaseTask } from './tasks';
 
 export async function release({ app, deployEnv, fullVersion }: ReleaseTask): Promise<string> {

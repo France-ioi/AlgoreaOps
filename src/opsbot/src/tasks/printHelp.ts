@@ -3,12 +3,10 @@ export function helpText(): string {
   return `
   Commands:
       help - this help
+      status - info about deployments and releases
       deploy <app> <env> <app-version> [<app-config>]
       release <app> <env> <deployment-version>
       command backend <env> db-recompute|db-migrate|db-migrate-undo|delete-temp-users|propagation
-
-  Outdated:
-      status - info about deployments and releases
 
   Where:
       app := frontend|backend
