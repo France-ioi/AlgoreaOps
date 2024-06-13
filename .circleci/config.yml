@@ -104,8 +104,8 @@ jobs:
                         "text": "Release now 🚀",
                         "emoji": true
                       },
-                      "value": "backend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}",
-                      "action_id": "release"
+                      "value": "release backend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}",
+                      "action_id": "command"
                     }
                   }
                 ]

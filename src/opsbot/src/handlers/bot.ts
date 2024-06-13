@@ -2,6 +2,13 @@ import { validateSlackSign } from '../libs/slackSignature';
 import { logIfDebug } from '../libs/logDebug';
 import { parseBotCommand } from '../botCommands/parse';
 import { SlackChatClient } from '../libs/slackChatClient';
+import { parse } from 'qs';
+
+type SlackPayload = { token: string } & (
+  { type: 'url_verification', challenge?: string } |
+  { type: 'event_callback', event?: unknown } |
+  { type: 'block_actions', actions?: [{ action_id: string, value: string }], user: { id: string }, channel: { name: string }}
+);
 
 export const streamHandler = awslambda.streamifyResponse(async (event, responseStream) => {
   responseStream.setContentType('application/json');
@@ -9,11 +16,20 @@ export const streamHandler = awslambda.streamifyResponse(async (event, responseS
 
   try {
     if (!event.body) throw { errorMessage: 'missing body' };
-    const eventWithBody = event as { body: string } ;
+    const eventBody = event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString() : event.body;
+    const contentType = event.headers['content-type'];
 
-    let body: { token: string, type: string, challenge: string, event?: unknown };
+    let payload: string|undefined;
+    if (contentType === 'application/json') payload = eventBody;
+    else if (contentType === 'application/x-www-form-urlencoded') payload = parse(eventBody).payload?.toString();
+    else throw { errorMessage: 'content-type not supported', body: 'received: '+ contentType };
+    if (!payload) throw { errorMessage: 'unable to get payload' };
+
+    logIfDebug('payload', payload);
+
+    let body: SlackPayload;
     try {
-      body = JSON.parse(eventWithBody.body) as { token: string, type: string, challenge: string, event?: unknown };
+      body = JSON.parse(payload) as SlackPayload;
     } catch (e) {
       throw { errorMessage: 'invalid json', body: 'received: '+event.body };
     }
@@ -41,7 +57,15 @@ export const streamHandler = awslambda.streamifyResponse(async (event, responseS
       } else {
         throw { errorMessage: 'unrecognised event type', type: body.type };
       }
-    } else throw { errorMessage: 'unsupported type', type: body.type };
+    } else if (body.type === 'block_actions') {
+      if (!body.actions) throw { errorMessage: 'expected "actions" key in body', body: 'received: '+ JSON.stringify(body) };
+      const action = body.actions[0];
+      if (action.action_id !== 'command') throw { errorMessage: 'only "command" action_id are supported', got: JSON.stringify(action) };
+      if (!action.value) throw { errorMessage: 'required action value', got: JSON.stringify(action) };
+      if (!body.channel.name) throw { errorMessage: 'unable to find channel name in event', got: JSON.stringify(body) };
+      responseStream.end('{}');
+      await parseBotCommand(body.channel.name, action.value, isSuperUser(body.user.id));
+    } else throw { errorMessage: 'unsupported type' };
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e);
