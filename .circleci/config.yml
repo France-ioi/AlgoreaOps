@@ -48,7 +48,17 @@ jobs:
                         "text": "${OUTPUTMSG}",
                         "emoji": true
                       }
-                    ]
+                    ],
+                    "accessory": {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Release now 🚀",
+                        "emoji": true
+                      },
+                      "value": "release frontend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}",
+                      "action_id": "command"
+                    }
                   }
                 ]
               }
