@@ -1,9 +1,11 @@
-import { LambdaFunctionURLEvent, LambdaFunctionURLResult } from 'aws-lambda';
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 
-export async function handler(_event: LambdaFunctionURLEvent): Promise<LambdaFunctionURLResult> {
+export const streamHandler = awslambda.streamifyResponse(async (_event, responseStream) => {
   const env = process.env.STAGE;
   if (!env) throw new Error('unexpected: STAGE env var not set');
+
+  responseStream.setContentType('application/json');
+  responseStream.end('{}');
 
   const client = new LambdaClient({ region: 'eu-west-3' });
   const command = new InvokeCommand({
@@ -11,9 +13,6 @@ export async function handler(_event: LambdaFunctionURLEvent): Promise<LambdaFun
     InvocationType: 'Event', // async
     Payload: JSON.stringify({ command: 'propagation' }),
   });
-  await client.send(command);
-  return {
-    statusCode: 200,
-    body: '{}'
-  };
-}
+  const result = await client.send(command);
+  console.log('Async invocation of the propagation command done with result:'+result.StatusCode);
+});

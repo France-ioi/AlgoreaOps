@@ -26,8 +26,9 @@ functions:
 
   propagate:
     name: alg-backend-propagation-${opt:stage}
-    handler: src/propagation.handler
-    url: true
+    handler: src/propagation.streamHandler
+    url:
+      invokeMode: RESPONSE_STREAM
     timeout: 5
 
 plugins:
