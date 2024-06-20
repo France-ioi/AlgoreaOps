@@ -18,6 +18,9 @@ parameters:
     type: enum
     enum: [ "dev", "prod" ]
     default: dev
+  slack-channel:
+    type: string
+    default: ""
 
 orbs:
   aws-cli: circleci/aws-cli@4.1.2
@@ -36,7 +39,7 @@ jobs:
       - run: ./scripts/decrypt.sh ./config
       - run: ./scripts/frontend-deploy.sh << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> ./config
       - slack/notify:
-          channel: algoreaops-bot
+          channel: << pipeline.parameters.slack-channel >>
           event: pass
           custom: |
               {
@@ -64,7 +67,7 @@ jobs:
                 ]
               }
       - slack/notify:
-          channel: algoreaops-bot
+          channel: << pipeline.parameters.slack-channel >>
           event: fail
           custom: |
               {
@@ -92,7 +95,7 @@ jobs:
       - run: ./scripts/decrypt.sh ./config
       - run: ./scripts/backend-deploy.sh << pipeline.parameters.deploy-env >> << pipeline.parameters.deploy-version >> ./config
       - slack/notify:
-          channel: algoreaops-bot
+          channel: << pipeline.parameters.slack-channel >>
           event: pass
           custom: |
               {
@@ -120,7 +123,7 @@ jobs:
                 ]
               }
       - slack/notify:
-          channel: algoreaops-bot
+          channel: << pipeline.parameters.slack-channel >>
           event: fail
           custom: |
               {

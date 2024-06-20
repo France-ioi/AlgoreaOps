@@ -49,6 +49,7 @@ async function triggerDeploy(task: DeployTask): Promise<string> {
         'deploy-version': task.version,
         'deploy-app-config': task.configHash ?? '',
         'aws-account': 'prod',
+        'slack-channel': 'algoreaops-bot',
       }
     };
     req.write(JSON.stringify(data));
