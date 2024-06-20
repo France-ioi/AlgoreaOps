@@ -18,12 +18,21 @@ provider:
             - 'lambda:GetAlias'
             - 'lambda:UpdateAlias'
             - 'lambda:ListVersionsByFunction'
-          Resource: "*"
+          Resource:
+            - arn:aws:lambda:eu-west-3:*:function:alg-*
         - Effect: Allow
           Action: 'lambda:InvokeFunction'
           Resource:
             - arn:aws:lambda:eu-west-3:565617039749:function:alg-backend-*-command
-  
+        - Effect: Allow
+          Action:
+            - 's3:ListBucket'
+          Resource: "arn:aws:s3:::alg-ops"
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+          Resource: "arn:aws:s3:::alg-ops/deployments/*"
+
   runtime: nodejs18.x
   memorySize: 128
 
