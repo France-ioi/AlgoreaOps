@@ -23,19 +23,6 @@ provider:
           Action: 'lambda:InvokeFunction'
           Resource:
             - arn:aws:lambda:eu-west-3:565617039749:function:alg-backend-*-command
-        - Effect: Allow
-          Action:
-            - 's3:ListBucket'
-          Resource: "arn:aws:s3:::alg-ops"
-        - Effect: Allow
-          Action:
-            - 's3:GetObject'
-          Resource: "arn:aws:s3:::alg-ops/deployments/*"
-        - Effect: Allow
-          Action: 'lambda:DeleteFunction'
-          Resource:
-            - arn:aws:lambda:eu-west-3:565617039749:function:alg-frontend-*-static-serve:*
-            - arn:aws:lambda:eu-west-3:565617039749:function:alg-backend-*-server:*
   
   runtime: nodejs18.x
   memorySize: 128
