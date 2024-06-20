@@ -159,7 +159,7 @@ jobs:
       - run: ./scripts/decrypt.sh environments/search
       - run: ./scripts/search-deploy.sh
 
-  opsbot-deploy:
+  opsbot-deploy-prod:
     docker:
       - image: cimg/node:16.20
     steps:
@@ -167,7 +167,7 @@ jobs:
       - aws-cli/setup
       - run: npm install -g serverless@3.30.1
       - run: ./scripts/decrypt.sh environments/opsbot
-      - run: ./scripts/opsbot-deploy.sh
+      - run: ./scripts/opsbot-deploy.sh prod
 
 workflows:
   version: 2
@@ -179,7 +179,7 @@ workflows:
           context: aws-prod
       - search-deploy:
           context: aws-prod
-      - opsbot-deploy:
+      - opsbot-deploy-prod:
           context: aws-prod
   frontend-deploy-dev:
     when:

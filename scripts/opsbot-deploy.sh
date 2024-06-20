@@ -14,6 +14,13 @@ if [[ ! "$0" =~ ^./script ]]; then
   exit 1;
 fi
 
+if [[ $# -ne 1 ]]; then
+  echo "Illegal number of parameters. Usage: $0 <stage>" >&2
+  exit 1
+fi
+
+STAGE=$1
+
 if [ "x${AWS_PROFILE}" != "x" ]; then SLS_EXTRA_ARGS="${SLS_EXTRA_ARGS} --aws-profile ${AWS_PROFILE}"; fi
 
 mkdir -p ${BUILD_DIR}
@@ -23,7 +30,7 @@ cp environments/opsbot/.env ${BUILD_DIR}
 # deploy sls to lambda
 cd ${BUILD_DIR}
 npm install
-sls deploy ${SLS_EXTRA_ARGS}
+sls deploy --stage ${STAGE} ${SLS_EXTRA_ARGS}
 
 cd ${SCRIPT_PWD}
 rm -rf ${BUILD_DIR}
