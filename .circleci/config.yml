@@ -163,7 +163,6 @@ jobs:
   opsbot-deploy:
     docker:
       - image: cimg/node:16.20
-    executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
