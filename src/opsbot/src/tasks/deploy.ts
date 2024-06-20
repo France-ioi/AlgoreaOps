@@ -47,7 +47,8 @@ async function triggerDeploy(task: DeployTask): Promise<string> {
         'deploy-app': task.app,
         'deploy-env': task.deployEnv,
         'deploy-version': task.version,
-        'deploy-app-config': task.configHash ?? ''
+        'deploy-app-config': task.configHash ?? '',
+        'aws-account': 'prod',
       }
     };
     req.write(JSON.stringify(data));

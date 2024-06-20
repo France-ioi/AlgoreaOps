@@ -14,6 +14,10 @@ parameters:
   deploy-app-config:
     type: string
     default: ""
+  aws-account:
+    type: enum
+    enum: [ "dev", "prod" ]
+    default: dev
 
 orbs:
   aws-cli: circleci/aws-cli@4.1.2
@@ -168,18 +172,31 @@ workflows:
     when:
       equal: [ auto, << pipeline.parameters.deploy-app >> ]
     jobs:
-      - forum-deploy
-      - search-deploy
-      - opsbot-deploy
-  frontend:
+      - forum-deploy:
+          context: aws-prod
+      - search-deploy:
+          context: aws-prod
+      - opsbot-deploy:
+          context: aws-prod
+  deploy-frontend-to-dev:
     when:
-      equal: [ frontend, << pipeline.parameters.deploy-app >> ]
+      and:
+        - equal: [ frontend, << pipeline.parameters.deploy-app >> ]
+        - equal: [ dev, << pipeline.parameters.aws-account >> ]
     jobs:
       - frontend-deploy:
-          context: slack-secrets
+          context: [ slack-secrets, aws-dev ]
+  deploy-frontend-to-prod:
+    when:
+      and:
+        - equal: [ frontend, << pipeline.parameters.deploy-app >> ]
+        - equal: [ prod, << pipeline.parameters.aws-account >> ]
+    jobs:
+      - frontend-deploy:
+          context: [ slack-secrets, aws-prod ]
   backend:
     when:
       equal: [ backend, << pipeline.parameters.deploy-app >> ]
     jobs:
       - backend-deploy:
-          context: slack-secrets
+          context: [ slack-secrets, aws-prod ]
