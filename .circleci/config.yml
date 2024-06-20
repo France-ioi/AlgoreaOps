@@ -24,7 +24,6 @@ jobs:
     working_directory: /home/circleci/project
     docker:
       - image: cimg/node:18.13
-    executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
@@ -82,7 +81,6 @@ jobs:
   backend-deploy:
     docker:
       - image: cimg/node:16.20
-    executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
@@ -140,7 +138,6 @@ jobs:
   forum-deploy:
     docker:
       - image: cimg/node:16.20
-    executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
@@ -151,7 +148,6 @@ jobs:
   search-deploy:
     docker:
       - image: cimg/node:16.20
-    executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
