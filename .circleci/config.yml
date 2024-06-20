@@ -197,9 +197,19 @@ workflows:
     jobs:
       - frontend-deploy:
           context: [ slack-secrets, aws-prod ]
-  backend:
+  deploy-backend-to-dev:
     when:
-      equal: [ backend, << pipeline.parameters.deploy-app >> ]
+      and:
+        - equal: [ backend, << pipeline.parameters.deploy-app >> ]
+        - equal: [ dev, << pipeline.parameters.aws-account >> ]
+    jobs:
+      - backend-deploy:
+          context: [ slack-secrets, aws-dev ]
+  deploy-backend-to-prod:
+    when:
+      and:
+        - equal: [ backend, << pipeline.parameters.deploy-app >> ]
+        - equal: [ prod, << pipeline.parameters.aws-account >> ]
     jobs:
       - backend-deploy:
           context: [ slack-secrets, aws-prod ]
