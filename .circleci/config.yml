@@ -181,7 +181,7 @@ workflows:
           context: aws-prod
       - opsbot-deploy:
           context: aws-prod
-  deploy-frontend-to-dev:
+  frontend-deploy-dev:
     when:
       and:
         - equal: [ frontend, << pipeline.parameters.deploy-app >> ]
@@ -189,7 +189,7 @@ workflows:
     jobs:
       - frontend-deploy:
           context: [ slack-secrets, aws-dev ]
-  deploy-frontend-to-prod:
+  frontend-deploy-prod:
     when:
       and:
         - equal: [ frontend, << pipeline.parameters.deploy-app >> ]
@@ -197,7 +197,7 @@ workflows:
     jobs:
       - frontend-deploy:
           context: [ slack-secrets, aws-prod ]
-  deploy-backend-to-dev:
+  backend-deploy-dev:
     when:
       and:
         - equal: [ backend, << pipeline.parameters.deploy-app >> ]
@@ -205,7 +205,7 @@ workflows:
     jobs:
       - backend-deploy:
           context: [ slack-secrets, aws-dev ]
-  deploy-backend-to-prod:
+  backend-deploy-prod:
     when:
       and:
         - equal: [ backend, << pipeline.parameters.deploy-app >> ]
