@@ -5,7 +5,7 @@ useDotenv: true
 provider:
   name: aws
   deploymentBucket:
-    name: alg-ops
+    name: ${env:OPS_BUCKET}
   region: eu-west-3
   logRetentionInDays: 14
   stackName: alg-opsbot-${opt:stage, 'dev'}
@@ -23,15 +23,15 @@ provider:
         - Effect: Allow
           Action: 'lambda:InvokeFunction'
           Resource:
-            - arn:aws:lambda:eu-west-3:565617039749:function:alg-backend-*-command
+            - arn:aws:lambda:eu-west-3:*:function:alg-backend-*-command
         - Effect: Allow
           Action:
             - 's3:ListBucket'
-          Resource: "arn:aws:s3:::alg-ops"
+          Resource: "arn:aws:s3:::${env:OPS_BUCKET}"
         - Effect: Allow
           Action:
             - 's3:GetObject'
-          Resource: "arn:aws:s3:::alg-ops/deployments/*"
+          Resource: "arn:aws:s3:::${env:OPS_BUCKET}/deployments/*"
 
   runtime: nodejs18.x
   memorySize: 128

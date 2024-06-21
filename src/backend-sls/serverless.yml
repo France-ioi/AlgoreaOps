@@ -5,7 +5,7 @@ useDotenv: true
 provider:
   name: aws
   deploymentBucket:
-    name: alg-ops
+    name: ${env:OPS_BUCKET}
   runtime: provided.al2
   region: eu-west-3
   logRetentionInDays: 90

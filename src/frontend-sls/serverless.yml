@@ -5,7 +5,7 @@ useDotenv: true
 provider:
   name: aws
   deploymentBucket:
-    name: alg-ops
+    name: ${env:OPS_BUCKET}
   iam:
     role:
       statements:
