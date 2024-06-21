@@ -9,6 +9,7 @@ provider:
   region: eu-west-3
   logRetentionInDays: 14
   stackName: alg-opsbot-${opt:stage, 'dev'}
+  versionFunctions: false
 
   iam:
     role:
@@ -55,13 +56,11 @@ functions:
       invokeMode: RESPONSE_STREAM
     timeout: 60 # it needs to responds in <3sec to Slack, but then it can still do processing
     reservedConcurrency: 1
-    versionFunctions: false
 
   warmer:
     handler: src/handlers/warmer.handler
     name: alg-opsbot-warmer-${opt:stage, 'dev'}
     timeout: 15
-    versionFunctions: false
     events:
       - schedule:
           rate: rate(5 minutes)
