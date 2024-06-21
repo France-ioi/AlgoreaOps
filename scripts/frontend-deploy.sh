@@ -14,6 +14,15 @@ if [[ $# -ne 3 ]]; then
   exit 1
 fi
 
+if [ "x${OPS_BUCKET}" = "x" ]; then
+  echo "OPS_BUCKET env var should be set" >&2
+  exit 1
+fi
+if [ "x${FRONTEND_PUBLIC_BUCKET}" = "x" ]; then
+  echo "FRONTEND_PUBLIC_BUCKET env var should be set" >&2
+  exit 1
+fi
+
 if [ "x${AWS_PROFILE}" != "x" ]; then AWS_EXTRA_ARGS="${AWS_EXTRA_ARGS} --profile ${AWS_PROFILE}"; fi
 AWS_S3_EXTRA_ARGS="${AWS_S3_EXTRA_ARGS} ${AWS_EXTRA_ARGS} "
 
@@ -33,7 +42,7 @@ cd $SCRIPT_PWD
 SCRIPT_HASH=$(git log -1 --pretty="format:%h" -- ./src/frontend-sls ./scripts/frontend-deploy.sh ./scripts/sub/frontend-build.sh ./scripts/sub/frontend-deploy-to-aws.sh)
 FULLVERSION=${VERSION}-${CONFIG_HASH}-${SCRIPT_HASH}
 DEPLOY_DIR=${DEPLOYED_ENV}/${FULLVERSION}
-aws s3 cp s3://alg-ops/deployments/frontend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
+aws s3 cp s3://${OPS_BUCKET}/deployments/frontend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
 LAMBDA_VERSION=$(cat ./LAMBDA_VERSION || echo "n/a")
 
 RE='^[0-9]+$'

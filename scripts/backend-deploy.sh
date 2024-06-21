@@ -14,6 +14,11 @@ if [[ $# -ne 3 ]]; then
   exit 1
 fi
 
+if [ "x${OPS_BUCKET}" = "x" ]; then
+  echo "OPS_BUCKET env var should be set" >&2
+  exit 1
+fi
+
 if [[ ! "$0" =~ ^./script ]]; then
   echo "Run the script from the project root!"
   exit 1;
@@ -34,7 +39,7 @@ cd $SCRIPT_PWD
 SCRIPT_HASH=$(git log -1 --pretty="format:%h" -- ./src/backend-sls ./scripts/backend-deploy.sh)
 FULLVERSION=${VERSION}-${CONFIG_HASH}-${SCRIPT_HASH}
 DEPLOY_DIR=${DEPLOYED_ENV}/${FULLVERSION}
-aws s3 cp s3://alg-ops/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
+aws s3 cp s3://${OPS_BUCKET}/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS} || echo "No lambda version file found"
 LAMBDA_VERSION=$(cat ./LAMBDA_VERSION || echo "n/a")
 
 RE='^[0-9]+$'

@@ -9,7 +9,12 @@
 # For instance: "AWS_PROFILE=... ./scripts/frontend-deploy-to-aws.sh ..."
 #
 
-S3_BUCKET=alg-public
+if [ "x${FRONTEND_PUBLIC_BUCKET}" = "x" ]; then
+  echo "FRONTEND_PUBLIC_BUCKET env var should be set" >&2
+  exit 1
+fi
+
+S3_BUCKET=${FRONTEND_PUBLIC_BUCKET}
 S3_REGION=eu-west-3
 
 SCRIPT_PWD=$(pwd)
