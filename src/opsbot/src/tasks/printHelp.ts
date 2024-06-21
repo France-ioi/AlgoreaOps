@@ -10,7 +10,7 @@ export function helpText(): string {
 
   Where:
       app := frontend|backend
-      env := fioi-prod|tez-prod
+      env := ${process.env['ALLOWED_DEPLOYENV']}
       app-version: in x.y.z format
       app-config: commit hash of config, if ommitted used the last one from https://github.com/France-ioi/AlgoreaConfigs/tree/<env>-<app>
       deployment-version: in x.y.z-<confighash>-<scripthash> format`;

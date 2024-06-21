@@ -1,13 +1,11 @@
 import { aliasInfo, functionVersions } from '../ops/lambdaFunctions';
 import { lambdaFunctionName } from '../ops/envToFunctionNames';
 
+const apps = [ 'frontend', 'backend'];
+
 export async function textStatus(): Promise<string> {
-  const envs = [
-    { app: 'backend', deployedEnv: 'fioi-prod' },
-    { app: 'frontend', deployedEnv: 'fioi-prod' },
-    { app: 'backend', deployedEnv: 'tez-prod' },
-    { app: 'frontend', deployedEnv: 'tez-prod' },
-  ];
+  const envs = process.env['ALLOWED_DEPLOYENV']?.split('|').flatMap(deployedEnv => apps.map(app => ({ app, deployedEnv })));
+  if (!envs) throw new Error('unable to determine envs for status');
   const info = await Promise.all(envs.map(async ({ app, deployedEnv }) => envStatus(app, deployedEnv)));
   return 'Current deployments: '+
     '(format: "<deployment version> [<deployment date] (<lambda version>)", ✅ indicates the released version)\n' +

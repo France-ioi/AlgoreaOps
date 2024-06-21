@@ -45,6 +45,7 @@ provider:
     CIRCLECI_TOKEN: ${env:CIRCLECI_TOKEN}
     SLACK_CHANNEL: ${env:SLACK_CHANNEL}
     DEBUG: ${env:DEBUG}
+    ALLOWED_DEPLOYENV: ${env:ALLOWED_DEPLOYENV}
 
 functions:
   slackbot:
