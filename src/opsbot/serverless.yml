@@ -47,6 +47,7 @@ provider:
     SLACK_CHANNEL: ${env:SLACK_CHANNEL}
     DEBUG: ${env:DEBUG}
     ALLOWED_DEPLOYENV: ${env:ALLOWED_DEPLOYENV}
+    OPS_BUCKET: ${env:OPS_BUCKET}
 
 functions:
   slackbot:
