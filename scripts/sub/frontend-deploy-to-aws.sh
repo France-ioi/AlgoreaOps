@@ -9,6 +9,10 @@
 # For instance: "AWS_PROFILE=... ./scripts/frontend-deploy-to-aws.sh ..."
 #
 
+if [ "x${OPS_BUCKET}" = "x" ]; then
+  echo "OPS_BUCKET env var should be set" >&2
+  exit 1
+fi
 if [ "x${FRONTEND_PUBLIC_BUCKET}" = "x" ]; then
   echo "FRONTEND_PUBLIC_BUCKET env var should be set" >&2
   exit 1
@@ -63,6 +67,6 @@ sls deploy --stage ${DEPLOYED_ENV} --param="description=${DESCRIPTION}" ${SLS_EX
 # print the lambda version
 LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-frontend-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'StaticDashserveLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)
 echo ${LAMBDA_VERSION} > LAMBDA_VERSION
-aws s3 cp LAMBDA_VERSION s3://alg-ops/deployments/frontend/${DEPLOY_DIR}/LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS}
+aws s3 cp LAMBDA_VERSION s3://${OPS_BUCKET}/deployments/frontend/${DEPLOY_DIR}/LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS}
 
 cd ${SCRIPT_PWD}
