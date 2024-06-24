@@ -67,7 +67,7 @@ if ! [[ ${LAMBDA_VERSION} =~ ${RE} ]]; then
 
   LAMBDA_VERSION=$(aws cloudformation describe-stacks --stack-name alg-backend-${DEPLOYED_ENV} --query "Stacks[0].Outputs[?OutputKey == 'ServerLambdaFunctionQualifiedArn'].OutputValue | [0]" ${AWS_EXTRA_ARGS} | cut -d: -f 8 | cut -d\" -f 1)
   echo ${LAMBDA_VERSION} > LAMBDA_VERSION
-  aws s3 cp LAMBDA_VERSION s3://alg-ops/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS}
+  aws s3 cp LAMBDA_VERSION s3://${OPS_BUCKET}/deployments/backend/${DEPLOY_DIR}/LAMBDA_VERSION ${AWS_S3_EXTRA_ARGS}
 
   cd ${SCRIPT_PWD}
 
