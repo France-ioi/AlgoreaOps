@@ -11,6 +11,8 @@ export function parseDeploy(text: string): Task|undefined {
       deployEnv: match[2],
       version: match[3],
       configHash: match[4],
+      awsAccount: process.env['STAGE'] === 'dev' ? 'dev' : 'prod',
+      slackChannel: process.env['SLACK_CHANNEL'],
     };
   }
   return undefined;
