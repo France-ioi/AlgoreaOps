@@ -1,7 +1,8 @@
 import { Task } from '../tasks/tasks';
 
 export function parseDeploy(text: string): Task|undefined {
-  const regex = new RegExp(`^deploy (frontend|backend) (${process.env['ALLOWED_DEPLOYENV']}) ([\d.-]+)(?: ([A-Fa-f0-9]{1,41}))?`);
+  const regex = new RegExp(String.raw`^deploy (frontend|backend) (${process.env['ALLOWED_DEPLOYENV']}) ([\d.-]+)(?: ([A-Fa-f0-9]{1,41}))?$`);
+  
   console.log(`deploy regex: ${regex.source}`);
   const match = regex.exec(text);
   if (match !== null) {
