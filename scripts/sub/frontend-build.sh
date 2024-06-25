@@ -39,14 +39,15 @@ cp -r ${CONFIG_DIR}/!(*.enc|.*|build-config.yaml) ${BUILD_DIR}/AlgoreaFrontend-$
 
 # lang config
 LANGS=$(yq '.languages | join(" ")' ${CONFIG_DIR}/build-config.yaml)
+ASSET_DOMAIN=$(yq '.assetDomain' ${CONFIG_DIR}/build-config.yaml)
 
 for LANG in $LANGS; do 
   cp -r ${BUILD_DIR}/AlgoreaFrontend-${VERSION} ${BUILD_DIR}/${LANG}
   cd ${BUILD_DIR}/${LANG}
 
   npm install
-  npm run injectDeployUrlForAssets --url="//d2dvl3h4927j7o.cloudfront.net/deployments/${DEPLOY_DIR}/${LANG}/"
-  npx ng build --configuration production-${LANG} --base-href / --deploy-url //d2dvl3h4927j7o.cloudfront.net/deployments/${DEPLOY_DIR}/${LANG}/
+  npm run injectDeployUrlForAssets --url="//${ASSET_DOMAIN}/deployments/${DEPLOY_DIR}/${LANG}/"
+  npx ng build --configuration production-${LANG} --base-href / --deploy-url //${ASSET_DOMAIN}/deployments/${DEPLOY_DIR}/${LANG}/
 
   mv ./dist/algorea/${LANG} ${BUILD_DIR}/${DEPLOY_DIR}/
 
