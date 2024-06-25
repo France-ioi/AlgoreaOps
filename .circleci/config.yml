@@ -60,8 +60,7 @@ jobs:
                         "text": "Release now 🚀",
                         "emoji": true
                       },
-                      "value": "release frontend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}",
-                      "action_id": "command"
+                      "value": "release frontend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}"
                     }
                   }
                 ]
@@ -116,8 +115,7 @@ jobs:
                         "text": "Release now 🚀",
                         "emoji": true
                       },
-                      "value": "release backend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}",
-                      "action_id": "command"
+                      "value": "release backend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}"
                     }
                   }
                 ]
