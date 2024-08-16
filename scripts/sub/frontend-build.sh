@@ -49,7 +49,7 @@ for LANG in $LANGS; do
   npm run injectDeployUrlForAssets --url="//${ASSET_DOMAIN}/deployments/${DEPLOY_DIR}/${LANG}/"
   npx ng build --configuration production-${LANG} --base-href / --deploy-url //${ASSET_DOMAIN}/deployments/${DEPLOY_DIR}/${LANG}/
 
-  mv ./dist/algorea/${LANG} ${BUILD_DIR}/${DEPLOY_DIR}/
+  mv ./dist/algorea/browser/${LANG} ${BUILD_DIR}/${DEPLOY_DIR}/
 
 done
 

@@ -62,27 +62,27 @@ Compile for prod: (one lang at a time as the build override the other)
 
 `ng build --configuration production-en --base-href / --deploy-url //assets.algorea.org/deployments/opentezos/en/ `
 
-aws s3 sync ./dist/algorea/ s3://algorea-static/deployments/opentezos --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400'  --profile franceioi-dev
+aws s3 sync ./dist/algorea/browser/ s3://algorea-static/deployments/opentezos --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400'  --profile franceioi-dev
 
-aws s3 cp ./dist/algorea/en/index.html s3://algorea-static/deployments/opentezos/en/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev
+aws s3 cp ./dist/algorea/browser/en/index.html s3://algorea-static/deployments/opentezos/en/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev
 
 ## fr
 
 `ng build --configuration production-fr --base-href / --deploy-url //assets.algorea.org/deployments/opentezos/fr/ `
 
-aws s3 sync ./dist/algorea/ s3://algorea-static/deployments/opentezos --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400'  --profile franceioi-dev
+aws s3 sync ./dist/algorea/browser/ s3://algorea-static/deployments/opentezos --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400'  --profile franceioi-dev
 
-aws s3 cp ./dist/algorea/fr/index.html s3://algorea-static/deployments/opentezos/fr/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev
+aws s3 cp ./dist/algorea/browser/fr/index.html s3://algorea-static/deployments/opentezos/fr/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev
 
 # en+fr
 
-`ng build --configuration production-en --base-href / --deploy-url //assets.algorea.org/deployments/opentezos/en/ && aws s3 sync ./dist/algorea/ s3://algorea-static/deployments/opentezos --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400' --profile franceioi-dev && aws s3 cp ./dist/algorea/en/index.html s3://algorea-static/deployments/opentezos/en/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev && ng build --configuration production-fr --base-href / --deploy-url //assets.algorea.org/deployments/opentezos/fr/ && aws s3 sync ./dist/algorea/ s3://algorea-static/deployments/opentezos --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400'  --profile franceioi-dev && aws s3 cp ./dist/algorea/fr/index.html s3://algorea-static/deployments/opentezos/fr/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev`
+`ng build --configuration production-en --base-href / --deploy-url //assets.algorea.org/deployments/opentezos/en/ && aws s3 sync ./dist/algorea/browser/ s3://algorea-static/deployments/opentezos --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400' --profile franceioi-dev && aws s3 cp ./dist/algorea/browser/en/index.html s3://algorea-static/deployments/opentezos/en/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev && ng build --configuration production-fr --base-href / --deploy-url //assets.algorea.org/deployments/opentezos/fr/ && aws s3 sync ./dist/algorea/browser/ s3://algorea-static/deployments/opentezos --acl public-read --exclude "*/index.html" --cache-control 'max-age=86400'  --profile franceioi-dev && aws s3 cp ./dist/algorea/browser/fr/index.html s3://algorea-static/deployments/opentezos/fr/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev`
 
 ## root
 
 Generate the root index.html file (see CI)
 
-aws s3 cp ./dist/algorea/index.html s3://algorea-static/deployments/opentezos/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev
+aws s3 cp ./dist/algorea/browser/index.html s3://algorea-static/deployments/opentezos/index.html --acl public-read --cache-control 'max-age=300'  --profile franceioi-dev
 
 
 # AWS lambda & ALB
