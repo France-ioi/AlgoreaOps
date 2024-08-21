@@ -17,7 +17,7 @@ provider:
         - Effect: Allow
           Action: lambda:InvokeFunction
           Resource:
-            - arn:aws:lambda:eu-west-3:565617039749:function:alg-backend-${opt:stage}-command
+            - arn:aws:lambda:eu-west-3:*:function:alg-backend-${opt:stage}-command
 
 package:
   individually: true
