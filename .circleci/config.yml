@@ -194,7 +194,7 @@ workflows:
         - equal: [ dev, << pipeline.parameters.aws-account >> ]
     jobs:
       - frontend-deploy:
-          context: [ slack-secrets, aws-dev ]
+          context: [ slack-secrets, aws-dev, sentry-sourcemaps ]
   frontend-deploy-prod:
     when:
       and:
@@ -202,7 +202,7 @@ workflows:
         - equal: [ prod, << pipeline.parameters.aws-account >> ]
     jobs:
       - frontend-deploy:
-          context: [ slack-secrets, aws-prod ]
+          context: [ slack-secrets, aws-prod, sentry-sourcemaps ]
   backend-deploy-dev:
     when:
       and:

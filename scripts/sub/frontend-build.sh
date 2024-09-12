@@ -48,6 +48,7 @@ for LANG in $LANGS; do
   npm install
   npm run injectDeployUrlForAssets --url="//${ASSET_DOMAIN}/deployments/${DEPLOY_DIR}/${LANG}/"
   npx ng build --configuration production-${LANG} --base-href / --deploy-url //${ASSET_DOMAIN}/deployments/${DEPLOY_DIR}/${LANG}/
+  npx sentry-cli sourcemaps inject --org france-ioi --project algorea ./dist/algorea/browser/${LANG} && npx sentry-cli sourcemaps upload --org france-ioi --project algorea ./dist/algorea/browser/${LANG}
 
   mv ./dist/algorea/browser/${LANG} ${BUILD_DIR}/${DEPLOY_DIR}/
 
