@@ -7,6 +7,14 @@ export const streamHandler = awslambda.streamifyResponse(async (_event, response
   responseStream.setContentType('application/json');
   responseStream.end('{}');
 
+  // If the 'DISABLE' env variable is set, the propagation is not sent to the command.
+  // That means that the propagation is not run anymore!!!
+  // To be use temporarily for emergency cases where propagations take the db down.
+  if (process.env.DISABLE) {
+    console.warn('Propagation disabled! Not calling the command.');
+    return;
+  }
+
   const client = new LambdaClient({ region: 'eu-west-3' });
   const command = new InvokeCommand({
     FunctionName: `alg-backend-${env}-command`,
