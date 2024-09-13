@@ -11,6 +11,7 @@ provider:
   logRetentionInDays: 90
   environment:
     STAGE: ${opt:stage, 'dev'}
+    DISABLE: ${env:DISABLE}
   iam:
     role:
       statements:
