@@ -19,7 +19,7 @@ export const streamHandler = awslambda.streamifyResponse(async (_event, response
   const command = new InvokeCommand({
     FunctionName: `alg-backend-${env}-command`,
     InvocationType: 'Event', // async
-    Payload: JSON.stringify({ command: 'propagation --disable-results-propagation' }),
+    Payload: JSON.stringify({ command: 'propagation' }),
   });
   const result = await client.send(command);
   console.log('Async invocation of the propagation command done with result:'+result.StatusCode);
