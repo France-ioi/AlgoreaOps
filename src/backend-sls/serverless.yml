@@ -29,6 +29,8 @@ package:
 functions:
   server:
     handler: bootstrap
+    environment:
+      ALGOREA_SERVER__DISABLERESULTSPROPAGATION: true
     package:
       artifact: build/server.zip
     timeout: 60
@@ -40,6 +42,7 @@ functions:
     environment:
       ALGOREA_DATABASE__USER: ${env:ALGOREA_DATABASE__ADMINUSER}
       ALGOREA_DATABASE__PASSWD: ${env:ALGOREA_DATABASE__ADMINPASSWD}
+      ALGOREA_SERVER__DISABLERESULTSPROPAGATION: false
     package:
       artifact: build/command.zip
     timeout: 900
