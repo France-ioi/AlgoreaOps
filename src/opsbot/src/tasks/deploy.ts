@@ -15,49 +15,51 @@ export async function deploy(task: DeployTask): Promise<string> {
 }
 
 async function triggerDeploy(task: DeployTask): Promise<string> {
-  return new Promise(function(resolve, reject) {
-    const req = request('https://circleci.com/api/v2/project/github/France-ioi/AlgoreaOps/pipeline', {
-      headers: { 'Circle-Token': process.env['CIRCLECI_TOKEN'], 'Content-Type': 'application/json' },
-      method: 'POST',
-
-    }, res => {
-      // reject on bad status
-      if (res.statusCode && (res.statusCode < 200 || res.statusCode >= 300)) {
-        return reject(new Error('statusCode=' + res.statusCode));
-      }
-      // cumulate data
-      const body: Uint8Array[] = [];
-      res.on('data', function(chunk: Uint8Array) {
-        body.push(chunk);
-      });
-      // resolve on end
-      res.on('end', function() {
-        let finalBody = '';
-        try {
-          finalBody = Buffer.concat(body).toString();
-        } catch (e) {
-          reject(e);
+  const results = await Promise.all([
+    task.deployEnv.map(deployEnv => new Promise(function(resolve, reject) {
+      const req = request('https://circleci.com/api/v2/project/github/France-ioi/AlgoreaOps/pipeline', {
+        headers: { 'Circle-Token': process.env['CIRCLECI_TOKEN'], 'Content-Type': 'application/json' },
+        method: 'POST',
+      }, res => {
+        // reject on bad status
+        if (res.statusCode && (res.statusCode < 200 || res.statusCode >= 300)) {
+          return reject(new Error('statusCode=' + res.statusCode));
         }
-        resolve(finalBody);
+        // cumulate data
+        const body: Uint8Array[] = [];
+        res.on('data', function(chunk: Uint8Array) {
+          body.push(chunk);
+        });
+        // resolve on end
+        res.on('end', function() {
+          let finalBody = '';
+          try {
+            finalBody = Buffer.concat(body).toString();
+          } catch (e) {
+            reject(e);
+          }
+          resolve(finalBody);
+        });
       });
-    });
-    const data = {
-      branch: 'v3',
-      parameters: {
-        'deploy-app': task.app,
-        'deploy-env': task.deployEnv,
-        'deploy-version': task.version,
-        'deploy-app-config': task.configHash ?? '',
-        'aws-account': task.awsAccount,
-        'slack-channel': task.slackChannel ?? '',
-      }
-    };
-    req.write(JSON.stringify(data));
-    // reject on request error
-    req.on('error', function(err) {
-      // This is not a "Second reject", just a different sort of failure
-      reject(err);
-    });
-    req.end();
-  });
+      const data = {
+        branch: 'v3',
+        parameters: {
+          'deploy-app': task.app,
+          'deploy-env': deployEnv,
+          'deploy-version': task.version,
+          'deploy-app-config': task.configHash ?? '',
+          'aws-account': task.awsAccount,
+          'slack-channel': task.slackChannel ?? '',
+        }
+      };
+      req.write(JSON.stringify(data));
+      // reject on request error
+      req.on('error', function(err) {
+        // This is not a "Second reject", just a different sort of failure
+        reject(err);
+      });
+      req.end();
+    }))
+  ]);
+  return results.join('\n');
 }
