@@ -9,7 +9,7 @@ export async function deploy(task: DeployTask): Promise<string> {
     const parsedResp = JSON.parse(response) as unknown as { number: number };
     jobNumber = +parsedResp.number;
   } catch (e) {
-    return `Unable to trigger deployment: ${JSON.stringify(e)})`;
+    return `Unable to trigger deployment: ${typeof e === 'object' ? JSON.stringify(e) : String(e)})`;
   }
   return `Deployment triggered (job number: ${jobNumber})`;
 }
