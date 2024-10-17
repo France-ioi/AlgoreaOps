@@ -53,18 +53,18 @@ jobs:
                         "emoji": true
                       }
                     ],
-                    "accessory": {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Release now 🚀",
-                        "emoji": true
-                      },
-                      "value": "release frontend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}"
-                    }
                   }
                 ]
               }
+#                    "accessory": {
+#                      "type": "button",
+#                      "text": {
+#                        "type": "plain_text",
+#                        "text": "Release now 🚀",
+#                        "emoji": true
+#                      },
+#                      "value": "release frontend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}"
+#                    }
       - slack/notify:
           channel: << pipeline.parameters.slack-channel >>
           event: fail
@@ -108,18 +108,18 @@ jobs:
                         "emoji": true
                       }
                     ],
-                    "accessory": {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Release now 🚀",
-                        "emoji": true
-                      },
-                      "value": "release backend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}"
-                    }
                   }
                 ]
               }
+#                    "accessory": {
+#                      "type": "button",
+#                      "text": {
+#                        "type": "plain_text",
+#                        "text": "Release now 🚀",
+#                        "emoji": true
+#                      },
+#                      "value": "release backend << pipeline.parameters.deploy-env >> ${DEPLOYED_VERSION}"
+#                    }
       - slack/notify:
           channel: << pipeline.parameters.slack-channel >>
           event: fail
